@@ -1,5 +1,3 @@
-import moviepy.video
-import moviepy.video.VideoClip
 import pygame
 import sys
 import os
@@ -347,18 +345,6 @@ class Polygon(Widget):
     def draw(self, surf):
         pygame.draw.polygon(surf, self.color, self.points, self.width)
 
-
-class Video(Widget):
-    def __init__(
-        self,
-        *,
-        position: tuple,
-        path: str,
-    ):
-        raise NotImplementedError("PAS FINI")
-        self.position = position
-        self.patgh = path
-        self.video = moviepy.video.VideoClip.Clip()
 
 
 class Window:
