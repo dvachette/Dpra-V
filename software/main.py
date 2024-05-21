@@ -1,7 +1,6 @@
 import pygame
 import sys
 import os
-import moviepy
 import time
 
 
