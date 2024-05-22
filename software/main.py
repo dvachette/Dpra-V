@@ -19,7 +19,51 @@ ALLOWED_STATES = [
     "enabled",
     "disabled",
 ]
-
+CODES_TO_KEYS = {
+    pygame.K_0 : "0",
+    pygame.K_1 : "1",
+    pygame.K_2 : "2",
+    pygame.K_3 : "3",
+    pygame.K_4 : "4",
+    pygame.K_5 : "5",
+    pygame.K_6 : "6",
+    pygame.K_7 : "7",
+    pygame.K_8 : "8",
+    pygame.K_9 : "9",
+    pygame.K_a : "a",
+    pygame.K_b : "b",
+    pygame.K_c : "c",
+    pygame.K_d : "d",
+    pygame.K_e : "e",
+    pygame.K_f : "f",
+    pygame.K_g : "g",
+    pygame.K_h : "h",
+    pygame.K_i : "i",
+    pygame.K_j : "j",
+    pygame.K_k : "k",
+    pygame.K_l : "l",
+    pygame.K_m : "m",
+    pygame.K_n : "n",
+    pygame.K_o : "o",
+    pygame.K_p : "p",
+    pygame.K_q : "q",
+    pygame.K_r : "r",
+    pygame.K_s : "s",
+    pygame.K_t : "t",
+    pygame.K_u : "u",
+    pygame.K_v : "v",
+    pygame.K_w : "w",
+    pygame.K_x : "x",
+    pygame.K_y : "y",
+    pygame.K_z : "z",
+    pygame.K_COMMA : ",",
+    pygame.K_SPACE : " ", 
+    pygame.K_EXCLAIM : "!",
+    pygame.K_QUESTION : "?",
+    pygame.K_PERIOD : ".",
+    pygame.K_AT : "@",
+    pygame.K_SEMICOLON : ";",
+}
 
 def FONT(size):
     font = pygame.font.SysFont("Aptos", size)
@@ -72,8 +116,10 @@ class TextInput(Widget):
         size:tuple,
         bg:str,
         fg:str,
+        text_size:int,
         show_keyboard:bool=True,
-        password_type:bool=True,
+        password_type:bool=False,
+        text_offset:tuple=(0,0)
 
     ):
         self.__position = position
@@ -82,6 +128,42 @@ class TextInput(Widget):
         self.__password_type = password_type
         self.__foreground = fg
         self.__background = bg
+        self.__surf = pygame.surface.Surface(self.__size)
+        self.__text_size = text_size
+        self.__font = FONT(self.__text_size)
+        self.__surf.fill(self.__background)
+        self.text = ""
+        self.__active = False
+        self.__rect = pygame.Rect(*self.__position, *self.__size)
+        self.__cursor = 0
+        self.__text_offset = text_offset
+    def __feed__(self, events):
+        for event in events:
+            if not self.__show_keyboard:
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if self.__rect.collidepoint(*pygame.mouse.get_pos()):
+                        self.__active = True
+                    else:
+                        self.__active = False
+                if event.type == pygame.KEYUP and self.__active:
+                    if event.key in CODES_TO_KEYS:
+                        working_text = [char for char in self.text]
+                        working_text.insert(self.__cursor,CODES_TO_KEYS[event.key])
+                        self.text="".join(working_text)
+                        self.__cursor+=1
+                    if event.key == pygame.K_BACKSPACE and len(self.text):
+                        working_text = [char for char in self.text]
+                        working_text.pop()
+                        self.text="".join(working_text)
+                        self.__cursor-=1
+                    
+
+    def __draw__(self,surf):
+        text_area = self.__font.render(self.text,False,self.__foreground,self.__background)
+        self.__surf.fill(self.__background)
+        self.__surf.blit(text_area, self.__text_offset)
+        surf.blit(self.__surf, self.__position)
+    
 class Button(Widget):
     def __init__(
         self: "Button",
@@ -378,6 +460,7 @@ class Window:
         self.__size = self.__surf.get_size()
         self.tick = set()
         self.__begin = time.time()
+        self.__after = list()
     @property
     def duration(self):
         return time.time() - self.__begin
@@ -399,7 +482,7 @@ class Window:
     def __delitem__(self, key):
         del self.__elements[key]
 
-    def __draw___elements(self):
+    def draw_elements(self):
         for element in self.__elements.values():
             element.__draw__(self.__surf)
 
@@ -412,7 +495,7 @@ class Window:
         self.__clock = pygame.time.Clock()
         while self.__runing:
             self.__surf.fill(self.__bg)
-            self.__draw___elements()
+            self.draw_elements()
             events = pygame.event.get()
             self.update_elements(events=events)
             for action in self.tick:
@@ -437,7 +520,7 @@ def second():
 
 
 main = Window(SURFACE, "#000000")
-settings = Window(SURFACE, "#000000")
+
 
 main["car image"] = ButtonImage(
     position=(0, 0),
@@ -455,23 +538,6 @@ main["stop_button"] = ButtonImage(
     text_size=10,
     path=os.path.join(IMAGES_FOLDER,"close.png")
 )
-main["window_button"] = Button(
-    size=(300, 100),
-    position=(200, 0),
-    text="new_win",
-    bg="#039283",
-    fg="#111111",
-    onclick=settings.run,
-    text_size=30,
-)
-settings["stop_button"] = ButtonImage(
-    position=(0, 0),
-    text=" ",
-    fg="#FF0000",
-    onclick=settings.stop,
-    text_size=10,
-    path=os.path.join(IMAGES_FOLDER, "close.png")
-)
 main["label_hour"] = Label(
     position=(400,0),
     size=(200,100),
@@ -480,7 +546,14 @@ main["label_hour"] = Label(
     fg="#0000FF",
     text_size=50,
 )
-
+main["text_input"] = TextInput(
+    position=(100,100),
+    size=(400,50),
+    bg="#0088FF",
+    fg="#000000",
+    text_size=50,
+    show_keyboard=False,
+)
 main.tick.add(second)
 main.run()
 
