@@ -32,10 +32,10 @@ class NotAllowedError(Exception):
 
 
 class Widget:
-    def draw(self, surf):
+    def __draw__(self, surf):
         raise NotImplementedError
 
-    def feed(self, events):
+    def __feed__(self, events):
         raise NotImplementedError
 
 
@@ -59,10 +59,10 @@ class Image(Widget):
     def __str__(self):
         return repr(self)
 
-    def feed(self, events):
+    def __feed__(self, events):
         pass
 
-    def draw(self, surf):
+    def __draw__(self, surf):
         surf.blit(self.__surf, self.__position)
 class TextInput(Widget):
     def __init__(
@@ -154,7 +154,7 @@ class Button(Widget):
     def __str__(self):
         return repr(self)
 
-    def feed(self, events):
+    def __feed__(self, events):
         clicked = False
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP and self.__state == "enabled":
@@ -167,7 +167,7 @@ class Button(Widget):
         if clicked:
             self.__onclick.__call__()
 
-    def draw(self, surf):
+    def __draw__(self, surf):
         surf.blit(self.__surf, self.__position)
         if self.__state == "disabled":
             surf.blit(self.__mask, self.__position)
@@ -235,10 +235,10 @@ class Label(Widget):
     def __str__(self):
         return repr(self)
 
-    def feed(self, events):
+    def __feed__(self, events):
         pass
 
-    def draw(self, surf):
+    def __draw__(self, surf):
         self.__text_area = FONT(self.__text_size).render(self.__text, 0, self.__fg)
         self.__surf.fill(self.__bg)
         self.__surf.blit(self.__text_area, self.__text_offset)
@@ -285,7 +285,7 @@ class ButtonImage(Widget):
     def __str__(self):
         return repr(self)
 
-    def draw(self, surf):
+    def __draw__(self, surf):
         surf.blit(self.__image, self.__position)
         surf.blit(
             self.__text_area,
@@ -295,7 +295,7 @@ class ButtonImage(Widget):
         if self.__state == "disabled":
             surf.blit(self.__mask, self.__position)
 
-    def feed(self, events):
+    def __feed__(self, events):
         clicked = False
         if self.__rect.collidepoint(*pygame.mouse.get_pos()):
             local_x, local_y = pygame.mouse.get_pos()
@@ -338,11 +338,11 @@ class Line(Widget):
     def __str__(self):
         return repr(self)
 
-    def feed(self, events):
+    def __feed__(self, events):
         pass
 
-    def draw(self, surf):
-        pygame.draw.line(surf, self.__color, self.__start, self.__end, self.__width)
+    def __draw__(self, surf):
+        pygame.__draw__.line(surf, self.__color, self.__start, self.__end, self.__width)
 
 
 class Polygon(Widget):
@@ -355,11 +355,11 @@ class Polygon(Widget):
         self.__color: str = color
         self.__width: int = width
 
-    def feed(self, events):
+    def __feed__(self, events):
         pass
 
-    def draw(self, surf):
-        pygame.draw.polygon(surf, self.__color, self.__points, self.__width)
+    def __draw__(self, surf):
+        pygame.__draw__.polygon(surf, self.__color, self.__points, self.__width)
 
 
 
@@ -399,20 +399,20 @@ class Window:
     def __delitem__(self, key):
         del self.__elements[key]
 
-    def draw_elements(self):
+    def __draw___elements(self):
         for element in self.__elements.values():
-            element.draw(self.__surf)
+            element.__draw__(self.__surf)
 
     def update_elements(self, events):
         for element in self.__elements.values():
-            element.feed(events)
+            element.__feed__(events)
 
     def run(self):
         self.__runing = True
         self.__clock = pygame.time.Clock()
         while self.__runing:
             self.__surf.fill(self.__bg)
-            self.draw_elements()
+            self.__draw___elements()
             events = pygame.event.get()
             self.update_elements(events=events)
             for action in self.tick:
