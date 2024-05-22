@@ -13,8 +13,8 @@ if not pygame.get_init():
 # Constantes
 
 SURFACE = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-SOUNDS_FOLDER = os.path.join(os.getcwd(), "sounds")
-IMAGES_FOLDER = os.path.join(os.getcwd(), "images")
+SOUNDS_FOLDER = os.path.join(os.getcwd(), "software", "sounds")
+IMAGES_FOLDER = os.path.join(os.getcwd(), "software", "images")
 ALLOWED_STATES = [
     "enabled",
     "disabled",
@@ -361,7 +361,6 @@ class Window:
         self.size = self.surf.get_size()
         self.tick = set()
         self.begin = time.time()
-        self.after = dict()
     @property
     def duration(self):
         return time.time() - self.begin
@@ -425,7 +424,7 @@ settings = Window(SURFACE, "#000000")
 
 main["car image"] = ButtonImage(
     position=(0, 0),
-    path=IMAGES_FOLDER + "/bg_main.png",
+    path=os.path.join(IMAGES_FOLDER,"bg_main.png"),
     text=" ",
     fg="#000000",
     text_size=10,
@@ -437,7 +436,7 @@ main["stop_button"] = ButtonImage(
     fg="#FF0000",
     onclick=main.stop,
     text_size=10,
-    path=IMAGES_FOLDER + "/close.png",
+    path=os.path.join(IMAGES_FOLDER,"close.png")
 )
 main["window_button"] = Button(
     size=(300, 100),
@@ -454,7 +453,7 @@ settings["stop_button"] = ButtonImage(
     fg="#FF0000",
     onclick=settings.stop,
     text_size=10,
-    path=IMAGES_FOLDER + "/close.png",
+    path=os.path.join(IMAGES_FOLDER, "close.png")
 )
 main["label_hour"] = Label(
     position=(400,0),
@@ -465,5 +464,6 @@ main["label_hour"] = Label(
     text_size=50,
 )
 main.tick.add(second)
+main.after[1] = lambda _=None:print("tic")
 main.run()
 
