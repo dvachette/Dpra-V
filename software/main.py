@@ -361,7 +361,7 @@ class Window:
         self.size = self.surf.get_size()
         self.tick = set()
         self.begin = time.time()
-
+        self.after = dict()
     @property
     def duration(self):
         return time.time() - self.begin
