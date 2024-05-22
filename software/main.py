@@ -376,7 +376,7 @@ class Window:
         self.__elements = dict()
         self.__runing = False
         self.__size = self.__surf.get_size()
-        self.__tick = set()
+        self.tick = set()
         self.__begin = time.time()
     @property
     def duration(self):
@@ -401,7 +401,7 @@ class Window:
 
     def draw_elements(self):
         for element in self.__elements.values():
-            element.draw(self.surf)
+            element.draw(self.__surf)
 
     def update_elements(self, events):
         for element in self.__elements.values():
@@ -411,11 +411,11 @@ class Window:
         self.__runing = True
         self.__clock = pygame.time.Clock()
         while self.__runing:
-            self.__surf.fill(self.bg)
+            self.__surf.fill(self.__bg)
             self.draw_elements()
             events = pygame.event.get()
             self.update_elements(events=events)
-            for action in self.__tick:
+            for action in self.tick:
                 action.__call__()
             for event in events:
                 if event.type == pygame.QUIT:
@@ -423,7 +423,7 @@ class Window:
                     self.runing = False
                     sys.exit()
             pygame.display.flip()
-            self.__clock.tick(self.FPS)
+            self.__clock.tick(self.__FPS)
 
     def stop(self):
         self.__runing = False
@@ -480,6 +480,7 @@ main["label_hour"] = Label(
     fg="#0000FF",
     text_size=50,
 )
-main.__tick.add(second)
+
+main.tick.add(second)
 main.run()
 
