@@ -1,81 +1,103 @@
+# Importations
+# You need to run pip install pygame (windows) or python3 -m pip3 install pygame (unix)
 import pygame
 import sys
 import os
 import time
 
-
-# import pin
-
 # Initialisation
 if not pygame.get_init():
     pygame.init()
 
-# Constantes
+# Constants
 
+# The main surface, which will be used for the program
 SURFACE = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+# The folder where all the sounds are located
 SOUNDS_FOLDER = os.path.join(os.getcwd(), "software", "sounds")
+# The folder with all the images assets
 IMAGES_FOLDER = os.path.join(os.getcwd(), "software", "images")
+# The two states allowed for "Button" and "ButtonImage"
 ALLOWED_STATES = [
     "enabled",
     "disabled",
 ]
+# Link betwin the pygame keys constants and their corresponding character
 CODES_TO_KEYS = {
-    pygame.K_0 : "0",
-    pygame.K_1 : "1",
-    pygame.K_2 : "2",
-    pygame.K_3 : "3",
-    pygame.K_4 : "4",
-    pygame.K_5 : "5",
-    pygame.K_6 : "6",
-    pygame.K_7 : "7",
-    pygame.K_8 : "8",
-    pygame.K_9 : "9",
-    pygame.K_a : "a",
-    pygame.K_b : "b",
-    pygame.K_c : "c",
-    pygame.K_d : "d",
-    pygame.K_e : "e",
-    pygame.K_f : "f",
-    pygame.K_g : "g",
-    pygame.K_h : "h",
-    pygame.K_i : "i",
-    pygame.K_j : "j",
-    pygame.K_k : "k",
-    pygame.K_l : "l",
-    pygame.K_m : "m",
-    pygame.K_n : "n",
-    pygame.K_o : "o",
-    pygame.K_p : "p",
-    pygame.K_q : "q",
-    pygame.K_r : "r",
-    pygame.K_s : "s",
-    pygame.K_t : "t",
-    pygame.K_u : "u",
-    pygame.K_v : "v",
-    pygame.K_w : "w",
-    pygame.K_x : "x",
-    pygame.K_y : "y",
-    pygame.K_z : "z",
-    pygame.K_COMMA : ",",
-    pygame.K_SPACE : " ", 
-    pygame.K_EXCLAIM : "!",
-    pygame.K_QUESTION : "?",
-    pygame.K_PERIOD : ".",
-    pygame.K_AT : "@",
-    pygame.K_SEMICOLON : ";",
+    pygame.K_0: "0",
+    pygame.K_1: "1",
+    pygame.K_2: "2",
+    pygame.K_3: "3",
+    pygame.K_4: "4",
+    pygame.K_5: "5",
+    pygame.K_6: "6",
+    pygame.K_7: "7",
+    pygame.K_8: "8",
+    pygame.K_9: "9",
+    pygame.K_a: "a",
+    pygame.K_b: "b",
+    pygame.K_c: "c",
+    pygame.K_d: "d",
+    pygame.K_e: "e",
+    pygame.K_f: "f",
+    pygame.K_g: "g",
+    pygame.K_h: "h",
+    pygame.K_i: "i",
+    pygame.K_j: "j",
+    pygame.K_k: "k",
+    pygame.K_l: "l",
+    pygame.K_m: "m",
+    pygame.K_n: "n",
+    pygame.K_o: "o",
+    pygame.K_p: "p",
+    pygame.K_q: "q",
+    pygame.K_r: "r",
+    pygame.K_s: "s",
+    pygame.K_t: "t",
+    pygame.K_u: "u",
+    pygame.K_v: "v",
+    pygame.K_w: "w",
+    pygame.K_x: "x",
+    pygame.K_y: "y",
+    pygame.K_z: "z",
+    pygame.K_COMMA: ",",
+    pygame.K_SPACE: " ",
+    pygame.K_EXCLAIM: "!",
+    pygame.K_QUESTION: "?",
+    pygame.K_PERIOD: ".",
+    pygame.K_AT: "@",
+    pygame.K_SEMICOLON: ";",
 }
 
-def FONT(size):
+
+# All the texts are using the same font
+def FONT(size: int) -> pygame.font.SysFont:
+    """
+    FONT(size:int)->pygame.font.Sysfont
+    This function is used to get the font used by all the texts in the GUI
+    """
     font = pygame.font.SysFont("Aptos", size)
     return font
 
 
-# Classes d'elements
+# Error classes
 class NotAllowedError(Exception):
+    """
+    Base Exception raised when you are not allowed to do a thing,
+    such as set a property attribute which is not meant to
+    """
+
     pass
 
 
+# Widget classes
 class Widget:
+    """
+    Base exception for widgets
+    All widgets needs to have a __draw__(self,surf_dest)
+    and a __feed__(self,events) method defined
+    """
+
     def __draw__(self, surf):
         raise NotImplementedError
 
@@ -84,7 +106,26 @@ class Widget:
 
 
 class Image(Widget):
-    def __init__(self, *, position, path, transparency=255, resize=None):
+    """
+    Image(
+        *,
+        position:
+        tuple,
+        path:str,
+        transparency:int=255,
+        resize:tuple|None=None
+    )
+    This class is used to display images
+    """
+
+    def __init__(
+        self,
+        *,
+        position: tuple,
+        path: str,
+        transparency: int = 255,
+        resize: tuple | None = None,
+    ) -> None:
         self.__image = pygame.image.load(path)
         self.__position = position
         self.__path = path
@@ -108,19 +149,20 @@ class Image(Widget):
 
     def __draw__(self, surf):
         surf.blit(self.__surf, self.__position)
+
+
 class TextInput(Widget):
     def __init__(
         self,
         *,
-        position:tuple,
-        size:tuple,
-        bg:str,
-        fg:str,
-        text_size:int,
-        show_keyboard:bool=True,
-        password_type:bool=False,
-        text_offset:tuple=(0,0)
-
+        position: tuple,
+        size: tuple,
+        bg: str,
+        fg: str,
+        text_size: int,
+        show_keyboard: bool = True,
+        password_type: bool = False,
+        text_offset: tuple = (0, 0),
     ):
         self.__position = position
         self.__size = size
@@ -137,6 +179,7 @@ class TextInput(Widget):
         self.__rect = pygame.Rect(*self.__position, *self.__size)
         self.__cursor = 0
         self.__text_offset = text_offset
+
     def __feed__(self, events):
         for event in events:
             if not self.__show_keyboard:
@@ -148,22 +191,24 @@ class TextInput(Widget):
                 if event.type == pygame.KEYUP and self.__active:
                     if event.key in CODES_TO_KEYS:
                         working_text = [char for char in self.text]
-                        working_text.insert(self.__cursor,CODES_TO_KEYS[event.key])
-                        self.text="".join(working_text)
-                        self.__cursor+=1
+                        working_text.insert(self.__cursor, CODES_TO_KEYS[event.key])
+                        self.text = "".join(working_text)
+                        self.__cursor += 1
                     if event.key == pygame.K_BACKSPACE and len(self.text):
                         working_text = [char for char in self.text]
                         working_text.pop()
-                        self.text="".join(working_text)
-                        self.__cursor-=1
-                    
+                        self.text = "".join(working_text)
+                        self.__cursor -= 1
 
-    def __draw__(self,surf):
-        text_area = self.__font.render(self.text,False,self.__foreground,self.__background)
+    def __draw__(self, surf):
+        text_area = self.__font.render(
+            self.text, False, self.__foreground, self.__background
+        )
         self.__surf.fill(self.__background)
         self.__surf.blit(text_area, self.__text_offset)
         surf.blit(self.__surf, self.__position)
-    
+
+
 class Button(Widget):
     def __init__(
         self: "Button",
@@ -202,14 +247,14 @@ class Button(Widget):
         self.__surf.set_alpha(self.__transparency)
 
     def configure(
-            self,
-            text_value = None,
-            foreground = None,
-            background = None,
-            text_size = None,
-            text_offset = None,
-            transparency = None,
-        ):
+        self,
+        text_value=None,
+        foreground=None,
+        background=None,
+        text_size=None,
+        text_offset=None,
+        transparency=None,
+    ):
         if text_value is not None:
             self.__text = text_value
         if foreground is not None:
@@ -222,13 +267,11 @@ class Button(Widget):
             self.__bg = text_offset
         if transparency is not None:
             self.__transparency = transparency
-            
+
         self.__text_area = FONT(self.__text_size).render(self.__text, 0, self.__fg)
         self.__surf.fill(self.__bg)
         self.__surf.blit(self.__text_area, self.__text_offset)
         self.__surf.set_alpha(self.__transparency)
-
-        
 
     def __repr__(self):
         return f"""Button object at {self.__position}"""
@@ -284,15 +327,15 @@ class Label(Widget):
         self.__transparency = transparency
 
     def configure(
-            self,
-            *,
-            text_value = None,
-            foreground = None,
-            background = None,
-            text_size = None,
-            text_offset = None,
-            transparency = None,
-        ):
+        self,
+        *,
+        text_value=None,
+        foreground=None,
+        background=None,
+        text_size=None,
+        text_offset=None,
+        transparency=None,
+    ):
         if text_value is not None:
             self.__text = text_value
         if foreground is not None:
@@ -305,7 +348,7 @@ class Label(Widget):
             self.__bg = text_offset
         if transparency is not None:
             self.__transparency = transparency
-            
+
         self.__text_area = FONT(self.__text_size).render(self.__text, 0, self.__fg)
         self.__surf.fill(self.__bg)
         self.__surf.blit(self.__text_area, self.__text_offset)
@@ -327,6 +370,7 @@ class Label(Widget):
         self.__surf.convert_alpha()
         self.__surf.set_alpha(self.__transparency)
         surf.blit(self.__surf, self.__position)
+
 
 class ButtonImage(Widget):
     def __init__(
@@ -444,7 +488,6 @@ class Polygon(Widget):
         pygame.__draw__.polygon(surf, self.__color, self.__points, self.__width)
 
 
-
 class Window:
     def __init__(
         self: "Window",
@@ -461,6 +504,7 @@ class Window:
         self.tick = set()
         self.__begin = time.time()
         self.__after = list()
+
     @property
     def duration(self):
         return time.time() - self.__begin
@@ -468,7 +512,6 @@ class Window:
     @duration.setter
     def duration(self, value):
         raise NotAllowedError()
-
 
     def __getitem__(self, key):
         return self.__elements[key]
@@ -524,7 +567,7 @@ main = Window(SURFACE, "#000000")
 
 main["car image"] = ButtonImage(
     position=(0, 0),
-    path=os.path.join(IMAGES_FOLDER,"bg_main.png"),
+    path=os.path.join(IMAGES_FOLDER, "bg_main.png"),
     text=" ",
     fg="#000000",
     text_size=10,
@@ -536,19 +579,19 @@ main["stop_button"] = ButtonImage(
     fg="#FF0000",
     onclick=main.stop,
     text_size=10,
-    path=os.path.join(IMAGES_FOLDER,"close.png")
+    path=os.path.join(IMAGES_FOLDER, "close.png"),
 )
 main["label_hour"] = Label(
-    position=(400,0),
-    size=(200,100),
-    text='',
+    position=(400, 0),
+    size=(200, 100),
+    text="",
     bg="#00FF00",
     fg="#0000FF",
     text_size=50,
 )
 main["text_input"] = TextInput(
-    position=(100,100),
-    size=(400,50),
+    position=(100, 100),
+    size=(400, 50),
     bg="#0088FF",
     fg="#000000",
     text_size=50,
@@ -556,4 +599,3 @@ main["text_input"] = TextInput(
 )
 main.tick.add(second)
 main.run()
-
