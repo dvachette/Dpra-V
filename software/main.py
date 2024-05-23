@@ -144,14 +144,23 @@ class Image(Widget):
     def __str__(self):
         return repr(self)
 
-    def __feed__(self, events):
+    def __feed__(self, events:list)->None:
+        """
+        Image.__feed__(events)
+        Define how the Image will react to any events
+        """
         pass
 
-    def __draw__(self, surf):
+    def __draw__(self, surf:pygame.surface.Surface):
+        """
+        Image.__draw__(dest_surf)
+        Draw the Image onto the given surface
+        """
         surf.blit(self.__surf, self.__position)
 
 
 class TextInput(Widget):
+    
     def __init__(
         self,
         *,
@@ -164,6 +173,7 @@ class TextInput(Widget):
         password_type: bool = False,
         text_offset: tuple = (0, 0),
     ):
+        
         self.__position = position
         self.__size = size
         self.__show_keyboard = show_keyboard
