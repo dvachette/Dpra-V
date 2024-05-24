@@ -68,7 +68,72 @@ CODES_TO_KEYS = {
     pygame.K_AT: "@",
     pygame.K_SEMICOLON: ";",
 }
+KEYBOARD_POS_CHAR = {
+    (10,10):"a",
+    (110,10):"z",
+    (210,10):"e",
+    (310,10):"r",
+    (410,10):"t",
+    (510,10):"y",
+    (610,10):"u",
+    (710,10):"i",
+    (810,10):"o",
+    (910,10):"p",
+    (10,110):"q",
+    (110,110):"s",
+    (210,110):"d",
+    (310,110):"f",
+    (410,110):"g",
+    (510,110):"h",
+    (610,110):"j",
+    (710,110):"k",
+    (810,110):"l",
+    (910,110):"m",
+    (10,210):"w",
+    (110,210):"x",
+    (210,210):"c",
+    (310,210):"v",
+    (410,210):"b",
+    (510,210):"n",
+    (610,210):"?",
+    (710,210):".",
+    (810,210):"!",
+    (910,210):";",
+}
 
+
+KEYBOARD_RECTS_CHAR = {
+    "a":pygame.rect.Rect((10,10+SURFACE.get_height()-300),(90,90)),
+    "z":pygame.rect.Rect((110,10+SURFACE.get_height()-300),(90,90)),
+    "e":pygame.rect.Rect((210,10+SURFACE.get_height()-300),(90,90)),
+    "r":pygame.rect.Rect((310,10+SURFACE.get_height()-300),(90,90)),
+    "t":pygame.rect.Rect((410,10+SURFACE.get_height()-300),(90,90)),
+    "y":pygame.rect.Rect((510,10+SURFACE.get_height()-300),(90,90)),
+    "u":pygame.rect.Rect((610,10+SURFACE.get_height()-300),(90,90)),
+    "i":pygame.rect.Rect((710,10+SURFACE.get_height()-300),(90,90)),
+    "o":pygame.rect.Rect((810,10+SURFACE.get_height()-300),(90,90)),
+    "p":pygame.rect.Rect((910,10+SURFACE.get_height()-300),(90,90)),
+    "q":pygame.rect.Rect((10,110+SURFACE.get_height()-300),(90,90)),
+    "s":pygame.rect.Rect((110,110+SURFACE.get_height()-300),(90,90)),
+    "d":pygame.rect.Rect((210,110+SURFACE.get_height()-300),(90,90)),
+    "f":pygame.rect.Rect((310,110+SURFACE.get_height()-300),(90,90)),
+    "g":pygame.rect.Rect((410,110+SURFACE.get_height()-300),(90,90)),
+    "h":pygame.rect.Rect((510,110+SURFACE.get_height()-300),(90,90)),
+    "j":pygame.rect.Rect((610,110+SURFACE.get_height()-300),(90,90)),
+    "k":pygame.rect.Rect((710,110+SURFACE.get_height()-300),(90,90)),
+    "l":pygame.rect.Rect((810,110+SURFACE.get_height()-300),(90,90)),
+    "m":pygame.rect.Rect((910,110+SURFACE.get_height()-300),(90,90)),
+    "w":pygame.rect.Rect((10,210+SURFACE.get_height()-300),(90,90)),
+    "x":pygame.rect.Rect((110,210+SURFACE.get_height()-300),(90,90)),
+    "c":pygame.rect.Rect((210,210+SURFACE.get_height()-300),(90,90)),
+    "v":pygame.rect.Rect((310,210+SURFACE.get_height()-300),(90,90)),
+    "b":pygame.rect.Rect((410,210+SURFACE.get_height()-300),(90,90)),
+    "n":pygame.rect.Rect((510,210+SURFACE.get_height()-300),(90,90)),
+    "?":pygame.rect.Rect((610,210+SURFACE.get_height()-300),(90,90)),
+    ".":pygame.rect.Rect((710,210+SURFACE.get_height()-300),(90,90)),
+    "!":pygame.rect.Rect((810,210+SURFACE.get_height()-300),(90,90)),
+    ";":pygame.rect.Rect((910,210+SURFACE.get_height()-300),(90,90)),
+}
 
 # All the texts are using the same font
 def FONT(size: int) -> pygame.font.SysFont:
@@ -189,15 +254,26 @@ class TextInput(Widget):
         self.__rect = pygame.Rect(*self.__position, *self.__size)
         self.__cursor = 0
         self.__text_offset = text_offset
-
+        self.__keyboard_surface = pygame.Surface((pygame.display.get_window_size()[0], 300))
+        self.__keyboard_surface.fill("#FF0000")
+        self.__keyboard_rect = pygame.Rect(0,pygame.display.get_window_size()[1]-300,pygame.display.get_window_size()[0], 300)
+        for key in KEYBOARD_POS_CHAR:
+            rect = pygame.Surface((90,90))
+            rect.fill("#DDDDDD")
+            font = FONT(30)
+            text = font.render(KEYBOARD_POS_CHAR[key], False, "#000000")
+            rect.blit(text,(0,0))
+            self.__keyboard_surface.blit(rect,key)
     def __feed__(self, events):
         for event in events:
-            if not self.__show_keyboard:
-                if event.type == pygame.MOUSEBUTTONUP:
-                    if self.__rect.collidepoint(*pygame.mouse.get_pos()):
+            if event.type == pygame.MOUSEBUTTONUP:
+                    if self.__rect.collidepoint(*pygame.mouse.get_pos()) and not self.__active:
                         self.__active = True
-                    else:
+                    elif self.__show_keyboard and self.__active and not self.__keyboard_rect.collidepoint(*pygame.mouse.get_pos()):
                         self.__active = False
+                    else:
+                        pass
+            if not self.__show_keyboard:
                 if event.type == pygame.KEYUP and self.__active:
                     if event.key in CODES_TO_KEYS:
                         working_text = [char for char in self.text]
@@ -209,15 +285,20 @@ class TextInput(Widget):
                         working_text.pop()
                         self.text = "".join(working_text)
                         self.__cursor -= 1
-
-    def __draw__(self, surf):
+            if self.__show_keyboard:
+                if event.type == pygame.MOUSEBUTTONUP:
+                    for letter in KEYBOARD_RECTS_CHAR:
+                        if KEYBOARD_RECTS_CHAR[letter].collidepoint(*pygame.mouse.get_pos()):
+                            self.text+=letter
+    def __draw__(self, surf:pygame.Surface):
         text_area = self.__font.render(
             self.text, False, self.__foreground, self.__background
         )
         self.__surf.fill(self.__background)
         self.__surf.blit(text_area, self.__text_offset)
         surf.blit(self.__surf, self.__position)
-
+        if self.__show_keyboard and self.__active:
+            surf.blit(self.__keyboard_surface,(0,surf.get_size()[1]-300))
 
 class Button(Widget):
     def __init__(
@@ -605,7 +686,7 @@ main["text_input"] = TextInput(
     bg="#0088FF",
     fg="#000000",
     text_size=50,
-    show_keyboard=False,
+    show_keyboard=True,
 )
 main.tick.add(second)
 main.run()
