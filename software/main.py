@@ -68,6 +68,8 @@ CODES_TO_KEYS = {
     pygame.K_AT: "@",
     pygame.K_SEMICOLON: ";",
 }
+# This dictionary is used to represent keys positions on the keyboard
+
 KEYBOARD_POS_CHAR = {
     (10,10):"a",
     (110,10):"z",
