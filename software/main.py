@@ -79,6 +79,7 @@ KEYBOARD_POS_CHAR = {
     (710,10):"i",
     (810,10):"o",
     (910,10):"p",
+    (1010,10):"<=",
     (10,110):"q",
     (110,110):"s",
     (210,110):"d",
@@ -89,6 +90,7 @@ KEYBOARD_POS_CHAR = {
     (710,110):"k",
     (810,110):"l",
     (910,110):"m",
+    (1010,110):"␣",
     (10,210):"w",
     (110,210):"x",
     (210,210):"c",
@@ -99,6 +101,7 @@ KEYBOARD_POS_CHAR = {
     (710,210):".",
     (810,210):"!",
     (910,210):";",
+
 }
 
 
@@ -133,6 +136,8 @@ KEYBOARD_RECTS_CHAR = {
     ".":pygame.rect.Rect((710,210+SURFACE.get_height()-300),(90,90)),
     "!":pygame.rect.Rect((810,210+SURFACE.get_height()-300),(90,90)),
     ";":pygame.rect.Rect((910,210+SURFACE.get_height()-300),(90,90)),
+    "<=":pygame.rect.Rect((1010,10+SURFACE.get_height()-300),(90,90)),
+    "␣":pygame.rect.Rect((1010,110+SURFACE.get_height()-300),(90,90)),
 }
 
 # All the texts are using the same font
@@ -289,7 +294,12 @@ class TextInput(Widget):
                 if event.type == pygame.MOUSEBUTTONUP:
                     for letter in KEYBOARD_RECTS_CHAR:
                         if KEYBOARD_RECTS_CHAR[letter].collidepoint(*pygame.mouse.get_pos()):
-                            self.text+=letter
+                            if letter == "<=":
+                                self.text = "".join(self.text[:-1])   
+                            elif letter == "␣":
+                                self.text+=" "
+                            else:
+                                self.text+=letter
     def __draw__(self, surf:pygame.Surface):
         text_area = self.__font.render(
             self.text, False, self.__foreground, self.__background
