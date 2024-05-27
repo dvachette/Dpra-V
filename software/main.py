@@ -289,9 +289,13 @@ class TextInput(Widget):
                         self.__cursor += 1
                     if event.key == pygame.K_BACKSPACE and len(self.text):
                         working_text = [char for char in self.text]
-                        working_text.pop()
+                        working_text.pop(self.__cursor)
                         self.text = "".join(working_text)
                         self.__cursor -= 1
+                    if event.key == pygame.K_LEFT and self.__cursor:
+                        self.__cursor -= 1
+                    if event.key == pygame.K_RIGHT and self.__cursor < len(self.text)-1:
+                        self.__cursor += 1
             if self.__show_keyboard:
                 if event.type == pygame.MOUSEBUTTONUP:
                     for letter in KEYBOARD_RECTS_CHAR:
@@ -698,7 +702,7 @@ main["text_input"] = TextInput(
     bg="#0088FF",
     fg="#000000",
     text_size=50,
-    show_keyboard=True,
+    show_keyboard=False,
 )
 main.tick.add(second)
 main.run()
