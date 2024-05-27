@@ -1,5 +1,13 @@
+# Comments indications:
+# * Important
+# TODO
+# ! alert
+# ? queries
+# // deleted code
+
+
 # Importations
-# You need to run pip install pygame (windows) or python3 -m pip3 install pygame (unix)
+# * You need to run pip install pygame (windows) or python3 -m pip3 install pygame (unix)
 import pygame_vkeyboard as vkboard
 import pygame
 import sys
