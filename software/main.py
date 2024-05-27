@@ -63,22 +63,48 @@ class Widget:
 
     def __draw__(self, surf):
         raise NotImplementedError
+    def __feed__(self, events: list) -> None:
+        """
+        Widget.__feed__(events)
 
-    def __feed__(self, events):
+        :events:list
+        The list of events that the Widget have to handle,
+        use Widget.__feed__(pygame.event.get()) for the best support
+
+        Define how the Widget will react to any events
+        """
+        raise NotImplementedError
+
+    def __draw__(self, surf: pygame.surface.Surface):
+        """
+        Widget.__draw__(dest_surf)
+
+        Draw the Image onto the given surface
+
+        :surf:pygame.Surface
+        You should ALWAYS use the surface given by pygame.display.get_surface()
+        """
         raise NotImplementedError
 
 
 class Image(Widget):
     """
-    Image(
-        *,
-        position:
-        tuple,
-        path:str,
-        transparency:int=255,
-        resize:tuple|None=None
-    )
     This class is used to display images
+
+    :position:tuple
+    The position of the image
+
+    :path:str
+    The path to the image
+
+    :transparency:int
+    The transparency of the image, 0 means totaly transparent,
+    and 255 totaly opaque
+
+    :resize:tuple
+    redim the image to fit the specified size, not recomended 
+
+
     """
 
     def __init__(
@@ -108,21 +134,44 @@ class Image(Widget):
         return repr(self)
 
     def __feed__(self, events: list) -> None:
-        """
-        Image.__feed__(events)
-        Define how the Image will react to any events
-        """
         pass
 
     def __draw__(self, surf: pygame.surface.Surface):
-        """
-        Image.__draw__(dest_surf)
-        Draw the Image onto the given surface
-        """
         surf.blit(self.__surf, self.__position)
-
+        self.__feed
 
 class TextInput(Widget):
+    """
+    This class is used to create text inputs directly into the window, 
+    with a virtual keyboard.
+
+
+    :position: tuple
+    A tuple to specify where the TextInput will be draw
+
+    :size: tuple
+    A tuple to specify the size of the TextInput
+
+    :bg: str
+    A string to define the background color of the TextInput
+    Use html like color code : "#1234AB"
+
+    :fg: str
+    A string to define the foreground color of the TextInput
+    Use html like color code : "#1234AB"
+
+    :text_size: int
+    The size of the text in the render
+
+    :text_offset: tuple
+    A tuple to define where the text will be positioned
+
+    :transparency:int
+    The transparency of the TextInput's Label, 0 means totaly transparent,
+    and 255 totaly opaque
+
+    """
+
     def __init__(
         self,
         *,
@@ -200,6 +249,10 @@ class TextInput(Widget):
 
 
 class Button(Widget):
+    """
+    This class is used to display buttons, whose can run a function on a click
+    
+    """
     def __init__(
         self: "Button",
         *,
