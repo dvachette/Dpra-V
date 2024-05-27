@@ -24,6 +24,7 @@ ALLOWED_STATES = [
     "disabled",
 ]
 
+
 # All the texts are using the same font
 def FONT(size: int) -> pygame.font.SysFont:
     """
@@ -98,31 +99,32 @@ class Image(Widget):
     def __str__(self):
         return repr(self)
 
-    def __feed__(self, events:list)->None:
+    def __feed__(self, events: list) -> None:
         """
         Image.__feed__(events)
         Define how the Image will react to any events
         """
         pass
 
-    def __draw__(self, surf:pygame.surface.Surface):
+    def __draw__(self, surf: pygame.surface.Surface):
         """
         Image.__draw__(dest_surf)
         Draw the Image onto the given surface
         """
         surf.blit(self.__surf, self.__position)
 
+
 class TextInput(Widget):
     def __init__(
         self,
         *,
-        position:tuple,
-        size:tuple,
-        bg:str,
-        fg:str,
-        text_size:int,
-        text_offset:tuple=(0,0),
-        transparency:int=255,
+        position: tuple,
+        size: tuple,
+        bg: str,
+        fg: str,
+        text_size: int,
+        text_offset: tuple = (0, 0),
+        transparency: int = 255,
     ):
         self.__size = size
         self.__position = position
@@ -143,7 +145,7 @@ class TextInput(Widget):
             show_text=True,
             joystick_navigation=True,
         )
-        
+
         self.__text_area = Label(
             position=self.__position,
             size=self.__size,
@@ -154,24 +156,29 @@ class TextInput(Widget):
             text_offset=self.__text_offset,
             transparency=self.__transparency,
         )
-        
+
     def __draw__(self, surf):
         self.__text_area.__draw__(surf=surf)
 
-        rects = self.__keyboard.draw(surface=surf,force=True)
+        rects = self.__keyboard.draw(surface=surf, force=True)
         pygame.display.update(rects)
+
     def __feed__(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP:
                 if self.__rect.collidepoint(*pygame.mouse.get_pos()):
                     self.__active = True
-                elif self.__active and not self.__keyboard.get_rect().collidepoint(*pygame.mouse.get_pos()):
+                elif self.__active and not self.__keyboard.get_rect().collidepoint(
+                    *pygame.mouse.get_pos()
+                ):
                     self.__active = False
             if event.type == pygame.FINGERUP:
                 if self.__rect.collidepoint(event.pos):
                     if self.__rect.collidepoint(*event.pos):
                         self.__active = True
-                    elif self.__active and not self.__keyboard.get_rect().collidepoint(*event.pos):
+                    elif self.__active and not self.__keyboard.get_rect().collidepoint(
+                        *event.pos
+                    ):
                         self.__active = False
         self.__text_area.__feed__(events)
         if self.__active:
@@ -180,8 +187,10 @@ class TextInput(Widget):
         else:
             self.__keyboard.disable()
 
-    def __update_text__(self,text):
+    def __update_text__(self, text):
         self.__text_area.configure(text_value=text)
+
+
 class Button(Widget):
     def __init__(
         self: "Button",
@@ -302,12 +311,12 @@ class Label(Widget):
     def configure(
         self,
         *,
-        text_value=None,
-        foreground=None,
-        background=None,
-        text_size=None,
-        text_offset=None,
-        transparency=None,
+        text_value: str | None = None,
+        foreground: str | None = None,
+        background: str | None = None,
+        text_size: int | None = None,
+        text_offset: tuple | None = None,
+        transparency: int | None = None,
     ):
         if text_value is not None:
             self.__text = text_value
@@ -555,8 +564,8 @@ main["label_hour"] = Label(
     text_size=50,
 )
 main["input"] = TextInput(
-    position=(300,300),
-    size=(300,100),
+    position=(300, 300),
+    size=(300, 100),
     bg="#673829",
     fg="#000000",
     text_size=50,
