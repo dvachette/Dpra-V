@@ -249,6 +249,7 @@ class TextInput(Widget):
 
 
 class Button(Widget):
+    # TODO: add a method to determinate if the button is at the top layer
     """
     This class is used to display buttons, whose can run a function on a click
     
