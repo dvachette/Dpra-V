@@ -115,20 +115,20 @@ class Image(Widget):
         transparency: int = 255,
         resize: tuple | None = None,
     ) -> None:
-        self.__image = pygame.image.load(path)
-        self.__position = position
-        self.__path = path
-        self.__resize = resize
-        self.__image.convert_alpha()
-        if self.__resize is not None:
-            pygame.transform.scale(self.__image, self.__resize)
-        self.__surf = pygame.Surface(self.__image.get_size())
-        self.__surf.blit(self.__image, (0, 0))
-        self.__surf.convert_alpha()
-        self.__surf.set_alpha(transparency)
+        self._image = pygame.image.load(path)
+        self._position = position
+        self._path = path
+        self._resize = resize
+        self._image.convert_alpha()
+        if self._resize is not None:
+            pygame.transform.scale(self._image, self._resize)
+        self._surf = pygame.Surface(self._image.get_size())
+        self._surf.blit(self._image, (0, 0))
+        self._surf.convert_alpha()
+        self._surf.set_alpha(transparency)
 
     def __repr__(self):
-        return f"""Image object at {self.__position}"""
+        return f"""Image object at {self._position}"""
 
     def __str__(self):
         return repr(self)
@@ -137,8 +137,8 @@ class Image(Widget):
         pass
 
     def __draw__(self, surf: pygame.surface.Surface):
-        surf.blit(self.__surf, self.__position)
-        self.__feed
+        surf.blit(self._surf, self._position)
+        self._feed
 
 class TextInput(Widget):
     """
@@ -183,69 +183,69 @@ class TextInput(Widget):
         text_offset: tuple = (0, 0),
         transparency: int = 255,
     ):
-        self.__size = size
-        self.__position = position
-        self.__layout = vkboard.VKeyboardLayout(vkboard.VKeyboardLayout.AZERTY)
-        self.__active = False
+        self._size = size
+        self._position = position
+        self._layout = vkboard.VKeyboardLayout(vkboard.VKeyboardLayout.AZERTY)
+        self._active = False
         self.text = ""
-        self.__bg = bg
-        self.__fg = fg
-        self.__text_size = text_size
-        self.__text_offset = text_offset
-        self.__transparency = transparency
-        self.__rect = pygame.rect.Rect(*self.__position, *self.__size)
-        self.__keyboard = vkboard.VKeyboard(
+        self._bg = bg
+        self._fg = fg
+        self._text_size = text_size
+        self._text_offset = text_offset
+        self._transparency = transparency
+        self._rect = pygame.rect.Rect(*self._position, *self._size)
+        self._keyboard = vkboard.VKeyboard(
             SURFACE,
             self.__update_text__,
-            self.__layout,
+            self._layout,
             renderer=vkboard.VKeyboardRenderer.DARK,
             show_text=True,
             joystick_navigation=True,
         )
 
-        self.__text_area = Label(
-            position=self.__position,
-            size=self.__size,
+        self._text_area = Label(
+            position=self._position,
+            size=self._size,
             text=self.text,
-            bg=self.__bg,
-            fg=self.__fg,
-            text_size=self.__text_size,
-            text_offset=self.__text_offset,
-            transparency=self.__transparency,
+            bg=self._bg,
+            fg=self._fg,
+            text_size=self._text_size,
+            text_offset=self._text_offset,
+            transparency=self._transparency,
         )
 
     def __draw__(self, surf):
-        self.__text_area.__draw__(surf=surf)
+        self._text_area.__draw__(surf=surf)
 
-        rects = self.__keyboard.draw(surface=surf, force=True)
+        rects = self._keyboard.draw(surface=surf, force=True)
         pygame.display.update(rects)
 
     def __feed__(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP:
-                if self.__rect.collidepoint(*pygame.mouse.get_pos()):
-                    self.__active = True
-                elif self.__active and not self.__keyboard.get_rect().collidepoint(
+                if self._rect.collidepoint(*pygame.mouse.get_pos()):
+                    self._active = True
+                elif self._active and not self._keyboard.get_rect().collidepoint(
                     *pygame.mouse.get_pos()
                 ):
-                    self.__active = False
+                    self._active = False
             if event.type == pygame.FINGERUP:
-                if self.__rect.collidepoint(event.pos):
-                    if self.__rect.collidepoint(*event.pos):
-                        self.__active = True
-                    elif self.__active and not self.__keyboard.get_rect().collidepoint(
+                if self._rect.collidepoint(event.pos):
+                    if self._rect.collidepoint(*event.pos):
+                        self._active = True
+                    elif self._active and not self._keyboard.get_rect().collidepoint(
                         *event.pos
                     ):
-                        self.__active = False
-        self.__text_area.__feed__(events)
-        if self.__active:
-            self.__keyboard.enable()
-            self.__keyboard.update(events)
+                        self._active = False
+        self._text_area.__feed__(events)
+        if self._active:
+            self._keyboard.enable()
+            self._keyboard.update(events)
         else:
-            self.__keyboard.disable()
+            self._keyboard.disable()
 
     def __update_text__(self, text):
-        self.__text_area.configure(text_value=text)
+        self._text_area.configure(text_value=text)
 
 
 class Button(Widget):
@@ -268,26 +268,26 @@ class Button(Widget):
         state: str = "enabled",
     ):
         if state in ALLOWED_STATES:
-            self.__state = state
+            self._state = state
         else:
             raise ValueError("Unrecognized state value, see ALLOWED_STATES")
-        self.__text_size = text_size
-        self.__position = position
-        self.__size = size
-        self.__text = text
-        self.__bg = bg
-        self.__fg = fg
-        self.__transparency = transparency
-        self.__onclick = onclick
-        self.__rect = pygame.Rect(*self.__position, *self.__size)
-        self.__text_area = FONT(self.__text_size).render(self.__text, 0, fg)
-        self.__surf = pygame.Surface(self.__size)
-        self.__surf.fill(bg)
-        self.__surf.blit(self.__text_area, text_offset)
-        self.__mask = pygame.Surface(self.__size)
-        self.__mask.fill("#202020")
-        self.__mask.set_alpha(150)
-        self.__surf.set_alpha(self.__transparency)
+        self._text_size = text_size
+        self._position = position
+        self._size = size
+        self._text = text
+        self._bg = bg
+        self._fg = fg
+        self._transparency = transparency
+        self._onclick = onclick
+        self._rect = pygame.Rect(*self._position, *self._size)
+        self._text_area = FONT(self._text_size).render(self._text, 0, fg)
+        self._surf = pygame.Surface(self._size)
+        self._surf.fill(bg)
+        self._surf.blit(self._text_area, text_offset)
+        self._mask = pygame.Surface(self._size)
+        self._mask.fill("#202020")
+        self._mask.set_alpha(150)
+        self._surf.set_alpha(self._transparency)
 
     def configure(
         self,
@@ -299,25 +299,25 @@ class Button(Widget):
         transparency=None,
     ):
         if text_value is not None:
-            self.__text = text_value
+            self._text = text_value
         if foreground is not None:
-            self.__fg = foreground
+            self._fg = foreground
         if background is not None:
-            self.__bg = background
+            self._bg = background
         if text_size is not None:
-            self.__text_size = text_size
+            self._text_size = text_size
         if text_offset is not None:
-            self.__bg = text_offset
+            self._bg = text_offset
         if transparency is not None:
-            self.__transparency = transparency
+            self._transparency = transparency
 
-        self.__text_area = FONT(self.__text_size).render(self.__text, 0, self.__fg)
-        self.__surf.fill(self.__bg)
-        self.__surf.blit(self.__text_area, self.__text_offset)
-        self.__surf.set_alpha(self.__transparency)
+        self._text_area = FONT(self._text_size).render(self._text, 0, self._fg)
+        self._surf.fill(self._bg)
+        self._surf.blit(self._text_area, self._text_offset)
+        self._surf.set_alpha(self._transparency)
 
     def __repr__(self):
-        return f"""Button object at {self.__position}"""
+        return f"""Button object at {self._position}"""
 
     def __str__(self):
         return repr(self)
@@ -325,20 +325,20 @@ class Button(Widget):
     def __feed__(self, events):
         clicked = False
         for event in events:
-            if event.type == pygame.MOUSEBUTTONUP and self.__state == "enabled":
-                if self.__rect.collidepoint(*pygame.mouse.get_pos()):
+            if event.type == pygame.MOUSEBUTTONUP and self._state == "enabled":
+                if self._rect.collidepoint(*pygame.mouse.get_pos()):
                     clicked = True
-        if self.__rect.collidepoint(*pygame.mouse.get_pos()):
+        if self._rect.collidepoint(*pygame.mouse.get_pos()):
             pygame.mouse.set_cursor(11)
         else:
             pygame.mouse.set_cursor(0)
         if clicked:
-            self.__onclick.__call__()
+            self._onclick.__call__()
 
     def __draw__(self, surf):
-        surf.blit(self.__surf, self.__position)
-        if self.__state == "disabled":
-            surf.blit(self.__mask, self.__position)
+        surf.blit(self._surf, self._position)
+        if self._state == "disabled":
+            surf.blit(self._mask, self._position)
 
 
 class Label(Widget):
@@ -354,20 +354,20 @@ class Label(Widget):
         text_offset: tuple = (0, 0),
         transparency=255,
     ):
-        self.__size = size
-        self.__position = position
-        self.__text = text
-        self.__bg = bg
-        self.__fg = fg
-        self.__text_size = text_size
-        self.__text_area = FONT(self.__text_size).render(self.__text, 0, fg)
-        self.__surf = pygame.Surface(self.__size)
-        self.__surf.fill(bg)
-        self.__surf.blit(self.__text_area, text_offset)
-        self.__surf.convert_alpha()
-        self.__surf.set_alpha(transparency)
-        self.__text_offset = text_offset
-        self.__transparency = transparency
+        self._size = size
+        self._position = position
+        self._text = text
+        self._bg = bg
+        self._fg = fg
+        self._text_size = text_size
+        self._text_area = FONT(self._text_size).render(self._text, 0, fg)
+        self._surf = pygame.Surface(self._size)
+        self._surf.fill(bg)
+        self._surf.blit(self._text_area, text_offset)
+        self._surf.convert_alpha()
+        self._surf.set_alpha(transparency)
+        self._text_offset = text_offset
+        self._transparency = transparency
 
     def configure(
         self,
@@ -380,25 +380,25 @@ class Label(Widget):
         transparency: int | None = None,
     ):
         if text_value is not None:
-            self.__text = text_value
+            self._text = text_value
         if foreground is not None:
-            self.__fg = foreground
+            self._fg = foreground
         if background is not None:
-            self.__bg = background
+            self._bg = background
         if text_size is not None:
-            self.__text_size = text_size
+            self._text_size = text_size
         if text_offset is not None:
-            self.__bg = text_offset
+            self._bg = text_offset
         if transparency is not None:
-            self.__transparency = transparency
+            self._transparency = transparency
 
-        self.__text_area = FONT(self.__text_size).render(self.__text, 0, self.__fg)
-        self.__surf.fill(self.__bg)
-        self.__surf.blit(self.__text_area, self.__text_offset)
-        self.__surf.set_alpha(self.__transparency)
+        self._text_area = FONT(self._text_size).render(self._text, 0, self._fg)
+        self._surf.fill(self._bg)
+        self._surf.blit(self._text_area, self._text_offset)
+        self._surf.set_alpha(self._transparency)
 
     def __repr__(self):
-        return f"""Label object at {self.__position}"""
+        return f"""Label object at {self._position}"""
 
     def __str__(self):
         return repr(self)
@@ -407,12 +407,12 @@ class Label(Widget):
         pass
 
     def __draw__(self, surf):
-        self.__text_area = FONT(self.__text_size).render(self.__text, 0, self.__fg)
-        self.__surf.fill(self.__bg)
-        self.__surf.blit(self.__text_area, self.__text_offset)
-        self.__surf.convert_alpha()
-        self.__surf.set_alpha(self.__transparency)
-        surf.blit(self.__surf, self.__position)
+        self._text_area = FONT(self._text_size).render(self._text, 0, self._fg)
+        self._surf.fill(self._bg)
+        self._surf.blit(self._text_area, self._text_offset)
+        self._surf.convert_alpha()
+        self._surf.set_alpha(self._transparency)
+        surf.blit(self._surf, self._position)
 
 
 class ButtonImage(Widget):
@@ -429,60 +429,60 @@ class ButtonImage(Widget):
         transparency: int = 255,
         state: str = "enabled",
     ):
-        self.__position = position
-        self.__text = text
-        self.__fg = fg
-        self.__onclick = onclick
-        self.__text_size = text_size
-        self.__image = pygame.image.load(path)
-        self.__size = self.__image.get_size()
-        self.__transparency = transparency
-        self.__rect = pygame.Rect(*self.__position, *self.__size)
-        self.__text_area = FONT(self.__text_size).render(self.__text, 0, fg)
-        self.__state = state
-        self.__mask = pygame.Surface(self.__size)
-        self.__mask.fill("#202020")
-        self.__mask.set_alpha(150)
-        self.__text_offset = text_offset
-        self.__image.set_alpha(self.__transparency)
-        self.__text_area.set_alpha(self.__transparency)
-        self.__collide = pygame.mask.from_surface(self.__image)
+        self._position = position
+        self._text = text
+        self._fg = fg
+        self._onclick = onclick
+        self._text_size = text_size
+        self._image = pygame.image.load(path)
+        self._size = self._image.get_size()
+        self._transparency = transparency
+        self._rect = pygame.Rect(*self._position, *self._size)
+        self._text_area = FONT(self._text_size).render(self._text, 0, fg)
+        self._state = state
+        self._mask = pygame.Surface(self._size)
+        self._mask.fill("#202020")
+        self._mask.set_alpha(150)
+        self._text_offset = text_offset
+        self._image.set_alpha(self._transparency)
+        self._text_area.set_alpha(self._transparency)
+        self._collide = pygame.mask.from_surface(self._image)
 
     def __repr__(self):
-        return f"""ButtonImage object at {self.__position}"""
+        return f"""ButtonImage object at {self._position}"""
 
     def __str__(self):
         return repr(self)
 
     def __draw__(self, surf):
-        surf.blit(self.__image, self.__position)
+        surf.blit(self._image, self._position)
         surf.blit(
-            self.__text_area,
-            tuple(p + o for p, o in zip(self.__position, self.__text_offset)),
+            self._text_area,
+            tuple(p + o for p, o in zip(self._position, self._text_offset)),
         )
 
-        if self.__state == "disabled":
-            surf.blit(self.__mask, self.__position)
+        if self._state == "disabled":
+            surf.blit(self._mask, self._position)
 
     def __feed__(self, events):
         clicked = False
-        if self.__rect.collidepoint(*pygame.mouse.get_pos()):
+        if self._rect.collidepoint(*pygame.mouse.get_pos()):
             local_x, local_y = pygame.mouse.get_pos()
-            local_x -= self.__position[0]
-            local_y -= self.__position[1]
+            local_x -= self._position[0]
+            local_y -= self._position[1]
             for event in events:
                 if (
                     event.type == pygame.MOUSEBUTTONUP
-                    and self.__state == "enabled"
-                    and self.__collide.get_at((local_x, local_y))
+                    and self._state == "enabled"
+                    and self._collide.get_at((local_x, local_y))
                 ):
                     clicked = True
-            if self.__collide.get_at((local_x, local_y)):
+            if self._collide.get_at((local_x, local_y)):
                 pygame.mouse.set_cursor(11)
             else:
                 pygame.mouse.set_cursor(0)
         if clicked:
-            self.__onclick.__call__()
+            self._onclick.__call__()
 
 
 class Line(Widget):
@@ -494,15 +494,15 @@ class Line(Widget):
         color: str,
         width: int = 1,
     ):
-        self.__start = start
-        self.__end = end
-        self.__color = color
-        self.__width = width
-        self.__topleft = (min(start[0], end[0]), min(start[1], end[1]))
-        self.__bottomright = (max(start[0], end[0]), max(start[1], end[1]))
+        self._start = start
+        self._end = end
+        self._color = color
+        self._width = width
+        self._topleft = (min(start[0], end[0]), min(start[1], end[1]))
+        self._bottomright = (max(start[0], end[0]), max(start[1], end[1]))
 
     def __repr__(self):
-        return f"""Line object at {self.__topleft}"""
+        return f"""Line object at {self._topleft}"""
 
     def __str__(self):
         return repr(self)
@@ -511,7 +511,7 @@ class Line(Widget):
         pass
 
     def __draw__(self, surf):
-        pygame.__draw__.line(surf, self.__color, self.__start, self.__end, self.__width)
+        pygame.__draw__.line(surf, self._color, self._start, self._end, self._width)
 
 
 class Polygon(Widget):
@@ -520,15 +520,15 @@ class Polygon(Widget):
     ):
         if fill:
             width = 0
-        self.__points: list = points
-        self.__color: str = color
-        self.__width: int = width
+        self._points: list = points
+        self._color: str = color
+        self._width: int = width
 
     def __feed__(self, events):
         pass
 
     def __draw__(self, surf):
-        pygame.__draw__.polygon(surf, self.__color, self.__points, self.__width)
+        pygame.__draw__.polygon(surf, self._color, self._points, self._width)
 
 
 class Window:
@@ -538,49 +538,49 @@ class Window:
         bg: str,
         fps: int = 60,
     ):
-        self.__bg = bg
-        self.__FPS = fps
-        self.__surf = surf
-        self.__elements = dict()
-        self.__runing = False
-        self.__size = self.__surf.get_size()
+        self._bg = bg
+        self._FPS = fps
+        self._surf = surf
+        self._elements = dict()
+        self._runing = False
+        self._size = self._surf.get_size()
         self.tick = set()
-        self.__begin = time.time()
-        self.__after = list()
+        self._begin = time.time()
+        self._after = list()
 
     @property
     def duration(self):
-        return time.time() - self.__begin
+        return time.time() - self._begin
 
     @duration.setter
     def duration(self, value):
         raise NotAllowedError()
 
     def __getitem__(self, key):
-        return self.__elements[key]
+        return self._elements[key]
 
     def __setitem__(self, key, value):
         if issubclass(type(value), Widget):
-            self.__elements[key] = value
+            self._elements[key] = value
         else:
             raise TypeError("Not a Widget")
 
     def __delitem__(self, key):
-        del self.__elements[key]
+        del self._elements[key]
 
     def draw_elements(self):
-        for element in self.__elements.values():
-            element.__draw__(self.__surf)
+        for element in self._elements.values():
+            element.__draw__(self._surf)
 
     def update_elements(self, events):
-        for element in self.__elements.values():
+        for element in self._elements.values():
             element.__feed__(events)
 
     def run(self):
-        self.__runing = True
-        self.__clock = pygame.time.Clock()
-        while self.__runing:
-            self.__surf.fill(self.__bg)
+        self._runing = True
+        self._clock = pygame.time.Clock()
+        while self._runing:
+            self._surf.fill(self._bg)
             self.draw_elements()
             events = pygame.event.get()
             self.update_elements(events=events)
@@ -592,10 +592,10 @@ class Window:
                     self.runing = False
                     sys.exit()
             pygame.display.flip()
-            self.__clock.tick(self.__FPS)
+            self._clock.tick(self._FPS)
 
     def stop(self):
-        self.__runing = False
+        self._runing = False
 
 
 # Fonctions d'appel de boutons
@@ -603,8 +603,7 @@ class Window:
 
 def second():
     main["label_hour"].configure(text_value=str(main.duration))
-
-
+        
 main = Window(SURFACE, "#000000")
 
 
