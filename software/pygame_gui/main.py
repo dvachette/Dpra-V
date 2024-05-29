@@ -594,6 +594,7 @@ class ButtonImage(Widget):
         self._fg = fg
         self._onclick = onclick
         self._text_size = text_size
+        self._path = path
         self._image = pygame.image.load(path)
         self._size = self._image.get_size()
         self._transparency = transparency
@@ -647,8 +648,6 @@ class ButtonImage(Widget):
     def configure(
         self,
         position: tuple | None = None,
-        size: tuple | None = None,
-        bg: str | None = None,
         fg: str | None = None,
         text_size: int | None = None,
         text_offset: tuple | None = None,
@@ -657,10 +656,6 @@ class ButtonImage(Widget):
     ):
         if position is None:
             position = self._position
-        if size is None:
-            size = self._size
-        if bg is None:
-            bg = self._bg
         if fg is None:
             fg = self._fg
         if text_size is None:
@@ -673,8 +668,9 @@ class ButtonImage(Widget):
             state = self._state
         self.__init__(
             position=position,
-            size=size,
-            bg=bg,
+            onclick = self._onclick,
+            text=self._text,
+            path = self._path,
             fg=fg,
             text_size=text_size,
             text_offset=text_offset,
