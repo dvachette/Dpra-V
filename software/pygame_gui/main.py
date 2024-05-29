@@ -14,18 +14,10 @@ import sys
 import os
 import time
 
-# Initialisation
-if not pygame.get_init():
-    pygame.init()
-
+SURFACE = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 # Constants
 
-# The main surface, which will be used for the program
-SURFACE = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-# The folder where all the sounds are located
-SOUNDS_FOLDER = os.path.join(os.getcwd(), "software", "sounds")
-# The folder with all the images assets
-IMAGES_FOLDER = os.path.join(os.getcwd(), "software", "images")
+
 # The two states allowed for "Button" and "ButtonImage"
 ALLOWED_STATES = [
     "enabled",
@@ -830,13 +822,12 @@ class Window:
 
     def __init__(
         self: "Window",
-        surf: pygame.Surface,
         bg: str,
         fps: int = 60,
     ):
         self._bg = bg
         self._FPS = fps
-        self._surf = surf
+        self._surf = SURFACE
         self._elements = dict()
         self._runing = False
         self._size = self._surf.get_size()
@@ -897,35 +888,3 @@ class Window:
 # Fonctions d'appel de boutons
 
 
-def second():
-    main["label_hour"].configure(text_value=str(main.duration))
-
-
-main = Window(SURFACE, "#000000")
-
-
-main["stop_button"] = ButtonImage(
-    position=(0, 0),
-    text=" ",
-    fg="#FF0000",
-    onclick=main.stop,
-    text_size=10,
-    path=os.path.join(IMAGES_FOLDER, "close.png"),
-)
-main["label_hour"] = Label(
-    position=(400, 0),
-    size=(200, 100),
-    text="",
-    bg="#00FF00",
-    fg="#0000FF",
-    text_size=50,
-)
-main["input"] = TextInput(
-    position=(300, 300),
-    size=(300, 100),
-    bg="#673829",
-    fg="#000000",
-    text_size=50,
-)
-main.tick.add(second)
-main.run()
