@@ -1,4 +1,4 @@
-# Comments indications:
+# Comments indications: (by using `better comments`VsCode Extension)
 # * Important
 # TODO
 # ! alert
@@ -63,6 +63,7 @@ class Widget:
 
     def __draw__(self, surf):
         raise NotImplementedError
+
     def __feed__(self, events: list) -> None:
         """
         Widget.__feed__(events)
@@ -86,6 +87,12 @@ class Widget:
         """
         raise NotImplementedError
 
+    def configure(self, *args, **kwargs):
+        """
+        Clean way to edit the Widget's attributes
+        """
+        raise NotImplementedError
+
 
 class Image(Widget):
     """
@@ -102,7 +109,7 @@ class Image(Widget):
     and 255 totaly opaque
 
     :resize:tuple
-    redim the image to fit the specified size, not recomended 
+    redim the image to fit the specified size, not recomended
 
 
     """
@@ -125,6 +132,7 @@ class Image(Widget):
         self._surf = pygame.Surface(self._image.get_size())
         self._surf.blit(self._image, (0, 0))
         self._surf.convert_alpha()
+        self._transparency = transparency
         self._surf.set_alpha(transparency)
 
     def __repr__(self):
@@ -140,9 +148,32 @@ class Image(Widget):
         surf.blit(self._surf, self._position)
         self._feed
 
+    def configure(
+        self,
+        position: tuple | None = None,
+        path: str | None = None,
+        transparency: int | None = None,
+        resize: tuple | None = None,
+    ):
+        if position is None:
+            position = self._position
+        if path is None:
+            path = self._path
+        if transparency is None:
+            transparency = self._transparency
+        if resize is None:
+            resize = self._resize
+        self.__init__(
+            position=position,
+            path=path,
+            transparency=transparency,
+            resize=resize,
+        )
+
+
 class TextInput(Widget):
     """
-    This class is used to create text inputs directly into the window, 
+    This class is used to create text inputs directly into the window,
     with a virtual keyboard.
 
 
@@ -247,13 +278,78 @@ class TextInput(Widget):
     def __update_text__(self, text):
         self._text_area.configure(text_value=text)
 
+    def configure(
+        self,
+        position: tuple | None = None,
+        size: tuple | None = None,
+        bg: str | None = None,
+        fg: str | None = None,
+        text_size: int | None = None,
+        text_offset: tuple | None = None,
+        transparency: int | None = None,
+    ):
+        if position is None:
+            position = self._position
+        if size is None:
+            size = self._size
+        if bg is None:
+            bg = self._bg
+        if fg is None:
+            fg = self._fg
+        if text_size is None:
+            text_size = self._text_size
+        if text_offset is None:
+            text_offset = self._text_offset
+        if transparency is None:
+            transparency = self._transparency
+        self.__init__(
+            position=position,
+            size=size,
+            bg=bg,
+            fg=fg,
+            text_size=text_size,
+            text_offset=text_offset,
+            transparency=transparency,
+        )
+
 
 class Button(Widget):
     # TODO: add a method to determinate if the button is at the top layer
     """
     This class is used to display buttons, whose can run a function on a click
-    
+
+    :size: tuple
+    The size of the widget
+
+    :position: tuple
+    The position of the widget
+
+    :text: str
+    The text displayed on the widget
+
+    :bg: str
+    The background of the widget
+
+    :fg: str
+    The foreground of the widget
+
+    :onclick
+    The function triggered by a click
+
+    :text_size: int
+    The text's size
+
+    :text_offset: tuple
+    The text's position on the widget
+
+    :transparency: int
+    The transparency of the widget
+
+    :state: str
+    The state of the button, `enabled` or `disabled`
+
     """
+
     def __init__(
         self: "Button",
         *,
@@ -298,6 +394,7 @@ class Button(Widget):
         text_size=None,
         text_offset=None,
         transparency=None,
+        state=None,
     ):
         if text_value is not None:
             self._text = text_value
@@ -311,6 +408,8 @@ class Button(Widget):
             self._bg = text_offset
         if transparency is not None:
             self._transparency = transparency
+        if state is not None:
+            self._state = state
 
         self._text_area = FONT(self._text_size).render(self._text, 0, self._fg)
         self._surf.fill(self._bg)
@@ -343,6 +442,36 @@ class Button(Widget):
 
 
 class Label(Widget):
+    """
+    A Label is used to display text
+
+    :size: tuple
+    The size of the widget
+
+    :position: tuple
+    The position of the widget
+
+    :text: str
+    The text displayed on the widget
+
+    :bg: str
+    The background of the widget
+
+    :fg: str
+    The foreground of the widget
+
+    :text_size: int
+    The text's size
+
+    :text_offset: tuple
+    The text's position on the widget
+
+    :transparency: int
+    The transparency of the widget
+
+
+    """
+
     def __init__(
         self: "Label",
         *,
@@ -417,6 +546,44 @@ class Label(Widget):
 
 
 class ButtonImage(Widget):
+    """
+    This Widget is used to create clickable images
+
+        :size: tuple
+    The size of the widget
+
+    :position: tuple
+    The position of the widget
+
+    :text: str
+    The text displayed on the widget
+
+    :path: str
+    The path of the image that will be display
+
+    :bg: str
+    The background of the widget
+
+    :fg: str
+    The foreground of the widget
+
+    :onclick
+    The function triggered by a click
+
+    :text_size: int
+    The text's size
+
+    :text_offset: tuple
+    The text's position on the widget
+
+    :transparency: int
+    The transparency of the widget
+
+    :state: str
+    The state of the button, `enabled` or `disabled`
+
+    """
+
     def __init__(
         self: "Button",
         *,
@@ -485,8 +652,63 @@ class ButtonImage(Widget):
         if clicked:
             self._onclick.__call__()
 
+    def configure(
+        self,
+        position: tuple | None = None,
+        size: tuple | None = None,
+        bg: str | None = None,
+        fg: str | None = None,
+        text_size: int | None = None,
+        text_offset: tuple | None = None,
+        transparency: int | None = None,
+        state: str | None = None,
+    ):
+        if position is None:
+            position = self._position
+        if size is None:
+            size = self._size
+        if bg is None:
+            bg = self._bg
+        if fg is None:
+            fg = self._fg
+        if text_size is None:
+            text_size = self._text_size
+        if text_offset is None:
+            text_offset = self._text_offset
+        if transparency is None:
+            transparency = self._transparency
+        if state is None:
+            state = self._state
+        self.__init__(
+            position=position,
+            size=size,
+            bg=bg,
+            fg=fg,
+            text_size=text_size,
+            text_offset=text_offset,
+            transparency=transparency,
+            state=state,
+        )
+
 
 class Line(Widget):
+    """
+    A class used to draw a line on the screen
+
+    :start: tuple
+    The starting point
+
+    :end: tuple
+    The end point
+
+    :color: str
+    The color of the line
+
+    :width: int
+    The width of the line
+
+    """
+
     def __init__(
         self,
         *,
@@ -514,8 +736,47 @@ class Line(Widget):
     def __draw__(self, surf):
         pygame.__draw__.line(surf, self._color, self._start, self._end, self._width)
 
+    def configure(
+        self,
+        start: tuple | None = None,
+        end: tuple | None = None,
+        color: str | None = None,
+        width: int | None = None,
+    ):
+        if start is None:
+            start = self._start
+        if end is None:
+            end = self._end
+        if color is None:
+            color = self._color
+        if width is None:
+            width = self._width
+        self.__init__(
+            start=start,
+            end=end,
+            color=color,
+            width=width,
+        )
+
 
 class Polygon(Widget):
+    """
+    This class is used to display polygon
+
+    :points: list[tuple]
+    A list of the polygon's points
+
+    :color: str
+    The color of the polygon
+
+    :width: int
+    The width of the Polygon's stroke
+
+    :fill: bool
+    Set it to True or set the width to 0 to fill the polygon with the specified color
+
+    """
+
     def __init__(
         self, *, points: list[tuple], color: str, width: int = 1, fill: bool = False
     ):
@@ -531,8 +792,42 @@ class Polygon(Widget):
     def __draw__(self, surf):
         pygame.__draw__.polygon(surf, self._color, self._points, self._width)
 
+    def configure(
+        self,
+        points: list | None = None,
+        color: str | None = None,
+        width: int | None = None,
+        fill: bool | None = None,
+    ):
+        if points is None:
+            points = self._points
+        if fill is None:
+            fill = self._fill
+        if color is None:
+            color = self._color
+        if width is None:
+            width = self._width
+        self.__init__(
+            points=points,
+            fill=fill,
+            color=color,
+            width=width,
+        )
+
 
 class Window:
+    """
+    :surf: pygame.Surface
+    The surface where the Window will be created
+
+    :bg: str
+    The background color of the Window
+
+    :fps: int
+    The max fps of the Window, leav it to 60 if you don't want any problem
+
+    """
+
     def __init__(
         self: "Window",
         surf: pygame.Surface,
@@ -604,7 +899,8 @@ class Window:
 
 def second():
     main["label_hour"].configure(text_value=str(main.duration))
-        
+
+
 main = Window(SURFACE, "#000000")
 
 

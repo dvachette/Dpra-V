@@ -61,17 +61,20 @@ def synchronize_layouts(surface_size, *layouts):
     for layout in layouts:
         if layout.key_size != layout_ref.key_size:
             logging.warning(
-                'Normalizing layout%s key size to %spx (from layout%s)',
+                "Normalizing layout%s key size to %spx (from layout%s)",
                 layouts.index(layout),
                 layout_ref.key_size,
-                layouts.index(layout_ref))
+                layouts.index(layout_ref),
+            )
             layout.key_size = layout_ref.key_size
         if layout.size != layout_ref.size:
             logging.warning(
-                'Normalizing layout%s size to %s*%spx (from layout%s)',
+                "Normalizing layout%s size to %s*%spx (from layout%s)",
                 layouts.index(layout),
-                layout_ref.size[0], layout_ref.size[1],
-                layouts.index(layout_ref))
+                layout_ref.size[0],
+                layout_ref.size[1],
+                layouts.index(layout_ref),
+            )
 
         # Compute all internal values of the layout
         layout.set_size(layout_ref.size, surface_size)
@@ -87,7 +90,7 @@ class VKeyRow(object):
     """
 
     def __init__(self):
-        """Default row constructor. """
+        """Default row constructor."""
         self.keys = []
         self.height = 0
         self.position = (0, 0)
@@ -162,25 +165,27 @@ class VKeyboardLayout(object):
     """
 
     # AZERTY Layout.
-    AZERTY = ['1234567890', 'azertyuiop', 'qsdfghjklm', 'wxcvbn']
+    AZERTY = ["1234567890", "azertyuiop", "qsdfghjklm", "wxcvbn"]
 
     # QWERTY Layout.
-    QWERTY = ['1234567890', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm']
+    QWERTY = ["1234567890", "qwertyuiop", "asdfghjkl", "zxcvbnm"]
 
     # Number only layout.
-    NUMBER = ['123', '456', '789', '0']
+    NUMBER = ["123", "456", "789", "0"]
 
     # TODO : Insert special characters layout which include number.
-    SPECIAL = [u'&é"\'(§è!çà)', u'°_-^$¨*ù`%£', u',;:=?.@+<>#', u'€[]{}/\\|']
+    SPECIAL = ["&é\"'(§è!çà)", "°_-^$¨*ù`%£", ",;:=?.@+<>#", "€[]{}/\\|"]
 
-    def __init__(self,
-                 model,
-                 key_size=None,
-                 padding=5,
-                 height_ratio=None,
-                 allow_uppercase=True,
-                 allow_special_chars=True,
-                 allow_space=True):
+    def __init__(
+        self,
+        model,
+        key_size=None,
+        padding=5,
+        height_ratio=None,
+        allow_uppercase=True,
+        allow_special_chars=True,
+        allow_space=True,
+    ):
         """Default constructor. Initializes layout rows.
 
         Parameters
@@ -225,9 +230,9 @@ class VKeyboardLayout(object):
             self.rows.append(row)
         self.max_length = len(max(self.rows, key=len))
         if self.max_length == 0:
-            raise ValueError('Empty layout model provided')
+            raise ValueError("Empty layout model provided")
         if height_ratio is not None and (height_ratio < 0.2 or height_ratio > 1):
-            raise ValueError('Surface height ratio shall be from 0.2 to 1')
+            raise ValueError("Surface height ratio shall be from 0.2 to 1")
 
         self._key_size = key_size
         self._key_size_computed = None
@@ -277,11 +282,11 @@ class VKeyboardLayout(object):
         # Create special keys list
         special_keys = [vkeys.VBackKey()]
         if self.allow_uppercase:
-            special_keys.append(
-                vkeys.VUppercaseKey(keyboard.on_uppercase, keyboard))
+            special_keys.append(vkeys.VUppercaseKey(keyboard.on_uppercase, keyboard))
         if self.allow_special_chars:
             special_keys.append(
-                vkeys.VSpecialCharKey(keyboard.on_special_char, keyboard))
+                vkeys.VSpecialCharKey(keyboard.on_special_char, keyboard)
+            )
         self.sprites.add(*special_keys, layer=1)
 
         # Dispatch special keys in the layout
@@ -322,17 +327,26 @@ class VKeyboardLayout(object):
         if self._key_size is None:
             self._key_size_computed = int(
                 (surface_size[0] - (self.padding * (self.max_length + 1)))
-                / self.max_length)
+                / self.max_length
+            )
 
         height = self.key_size * nb_rows + self.padding * (nb_rows + 1)
         if height > surface_size[1] * (self.height_ratio or 0.5):
-            self._key_size_computed = int((surface_size[1] * (self.height_ratio or 0.5)
-                                           - (self.padding * (nb_rows + 1))) / nb_rows)
+            self._key_size_computed = int(
+                (
+                    surface_size[1] * (self.height_ratio or 0.5)
+                    - (self.padding * (nb_rows + 1))
+                )
+                / nb_rows
+            )
             height = self.key_size * nb_rows + self.padding * (nb_rows + 1)
             if self._key_size:
                 self._key_size = self._key_size_computed
-                LOGGER.warning('Computed layout height outbound target surface,'
-                               ' reducing key_size to %spx', self.key_size)
+                LOGGER.warning(
+                    "Computed layout height outbound target surface,"
+                    " reducing key_size to %spx",
+                    self.key_size,
+                )
         elif self.height_ratio is not None:
             height = surface_size[1] * self.height_ratio
         self.set_size((surface_size[0], int(height)), surface_size)
@@ -351,8 +365,15 @@ class VKeyboardLayout(object):
         self.size = size
         self.position = (0, surface_size[1] - self.size[1])
 
-        y = self.position[1] + (self.size[1] - len(self.rows) * self.key_size
-                                - (len(self.rows) + 1) * self.padding) // 2
+        y = (
+            self.position[1]
+            + (
+                self.size[1]
+                - len(self.rows) * self.key_size
+                - (len(self.rows) + 1) * self.padding
+            )
+            // 2
+        )
         y += self.padding
         for row in self.rows:
             nb_keys = len(row)
@@ -434,8 +455,7 @@ class VKeyboardLayout(object):
         top = (-1, 0)
         right = (0, 1)
         bottom = (1, 0)
-        keys_dict = {center: key,
-                     left: None, top: None, right: None, bottom: None}
+        keys_dict = {center: key, left: None, top: None, right: None, bottom: None}
 
         for row_index, r in enumerate(self.rows):
             for key_index, k in enumerate(r.keys):
@@ -447,12 +467,14 @@ class VKeyboardLayout(object):
 
                     if row_index - 1 >= 0 or loop_col:
                         prev_row = self.rows[(row_index - 1) % len(self.rows)]
-                        keys_dict[top] = prev_row\
-                            .keys[min(key_index, len(prev_row) - 1)]
+                        keys_dict[top] = prev_row.keys[
+                            min(key_index, len(prev_row) - 1)
+                        ]
                     if row_index + 1 < len(self.rows) or loop_col:
                         next_row = self.rows[(row_index + 1) % len(self.rows)]
-                        keys_dict[bottom] = next_row\
-                            .keys[min(key_index, len(next_row) - 1)]
+                        keys_dict[bottom] = next_row.keys[
+                            min(key_index, len(next_row) - 1)
+                        ]
         return keys_dict
 
 
@@ -465,15 +487,17 @@ class VKeyboard(object):
     of drawing keyboard component to screen.
     """
 
-    def __init__(self,
-                 surface,
-                 text_consumer,
-                 main_layout,
-                 show_text=False,
-                 joystick_navigation=False,
-                 renderer=VKeyboardRenderer.DEFAULT,
-                 special_char_layout=None):
-        """ Default constructor.
+    def __init__(
+        self,
+        surface,
+        text_consumer,
+        main_layout,
+        show_text=False,
+        joystick_navigation=False,
+        renderer=VKeyboardRenderer.DEFAULT,
+        special_char_layout=None,
+    ):
+        """Default constructor.
 
         Parameters
         ----------
@@ -505,8 +529,7 @@ class VKeyboard(object):
 
         # Setup background as a DirtySprite
         self.eraser = None
-        self.background = VBackground(self.surface.get_rect().size,
-                                      self.renderer)
+        self.background = VBackground(self.surface.get_rect().size, self.renderer)
 
         # Setup the layouts
         self.layout = main_layout
@@ -520,7 +543,8 @@ class VKeyboard(object):
                     height_ratio=self.layout.height_ratio,
                     allow_uppercase=self.layout.allow_uppercase,
                     allow_special_chars=self.layout.allow_special_chars,
-                    allow_space=self.layout.allow_space)
+                    allow_space=self.layout.allow_space,
+                )
             self.layouts.append(special_char_layout)
 
         for layout in self.layouts:
@@ -558,8 +582,7 @@ class VKeyboard(object):
         self.layout.show()
 
     def set_eraser(self, surface):
-        """Setup the surface used to hide/clear the keyboard.
-        """
+        """Setup the surface used to hide/clear the keyboard."""
         self.eraser = surface.copy()
         for layout in self.layouts:
             layout.sprites.clear(surface, self.eraser)
@@ -582,10 +605,12 @@ class VKeyboard(object):
                 # sprites without using "dirty mechanism"
                 layout.sprites.set_clip(self.background.rect)
 
-        self.input.set_line_rect(self.layout.position[0],
-                                 self.layout.position[1] - self.layout.key_size,
-                                 self.layout.size[0],
-                                 self.layout.key_size)
+        self.input.set_line_rect(
+            self.layout.position[0],
+            self.layout.position[1] - self.layout.key_size,
+            self.layout.size[0],
+            self.layout.key_size,
+        )
 
     def set_text(self, text):
         """Set the current text in the internal buffer.
@@ -681,15 +706,16 @@ class VKeyboard(object):
             self.input.update(events)
 
             for event in events:
-                if event.type == pygame.MOUSEBUTTONDOWN\
-                        and event.button in (1, 2, 3):
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button in (1, 2, 3):
                     # Don't consider the mouse wheel (button 4 & 5)
                     key = self.layout.get_key_at(event.pos)
                     if key:
                         self.on_key_down(key)
                         self.on_select(0, 0, key)
-                    elif self.input.get_rect().collidepoint(event.pos)\
-                            and self.layout.selection:
+                    elif (
+                        self.input.get_rect().collidepoint(event.pos)
+                        and self.layout.selection
+                    ):
                         self.layout.selection.set_selected(0)
                         self.layout.selection = None
                         self.input.set_selected(1)
@@ -700,8 +726,10 @@ class VKeyboard(object):
                     if key:
                         self.on_key_down(key)
                         self.on_select(0, 0, key)
-                    elif self.input.get_rect().collidepoint(finger_pos)\
-                            and self.layout.selection:
+                    elif (
+                        self.input.get_rect().collidepoint(finger_pos)
+                        and self.layout.selection
+                    ):
                         self.layout.selection.set_selected(0)
                         self.layout.selection = None
                         self.input.set_selected(1)
@@ -714,31 +742,31 @@ class VKeyboard(object):
                         self.on_select(0, -1)
                     elif event.key == pygame.K_UP:
                         self.on_select(-1, 0)
-                    elif event.key == pygame.K_RIGHT and\
-                            not self.input.selected:
+                    elif event.key == pygame.K_RIGHT and not self.input.selected:
                         self.on_select(0, 1)
                     elif event.key == pygame.K_DOWN:
                         self.on_select(1, 0)
                     elif event.key == pygame.K_RETURN and self.layout.selection:
                         self.on_key_down(self.layout.selection)
                 elif event.type == pygame.JOYHATMOTION:
-                    if event.value == JOYHAT_LEFT and\
-                            not self.input.selected:
+                    if event.value == JOYHAT_LEFT and not self.input.selected:
                         self.on_select(0, -1)
                     elif event.value == JOYHAT_UP:
                         self.on_select(-1, 0)
-                    elif event.value == JOYHAT_RIGHT and\
-                            not self.input.selected:
+                    elif event.value == JOYHAT_RIGHT and not self.input.selected:
                         self.on_select(0, 1)
                     elif event.value == JOYHAT_DOWN:
                         self.on_select(1, 0)
-                elif event.type == pygame.JOYBUTTONDOWN\
-                        and event.button == 0 and self.layout.selection:
+                elif (
+                    event.type == pygame.JOYBUTTONDOWN
+                    and event.button == 0
+                    and self.layout.selection
+                ):
                     # Select button pressed
                     self.on_key_down(self.layout.selection)
 
     def on_select(self, increment_row, increment_col, key=None):
-        """"Change the currently selected key.
+        """ "Change the currently selected key.
 
         Parameters
         ----------
@@ -762,8 +790,8 @@ class VKeyboard(object):
                 return
 
             closest = self.layout.get_key_closest(
-                key or self.layout.selection,
-                loop_col=not self.input.is_enabled())
+                key or self.layout.selection, loop_col=not self.input.is_enabled()
+            )
 
             self.layout.selection.set_selected(0)
             self.layout.selection = None
@@ -804,7 +832,7 @@ class VKeyboard(object):
         if isinstance(key, vkeys.VBackKey):
             self.input.delete_at_cursor()
         else:
-            text = key.update_buffer('')
+            text = key.update_buffer("")
             if text:
                 self.input.add_at_cursor(text)
 

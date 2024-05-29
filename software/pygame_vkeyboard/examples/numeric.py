@@ -6,16 +6,17 @@
 # pylint: disable=import-error
 import pygame
 import pygame_vkeyboard as vkboard
+
 # pylint: enable=import-error
 
 
 def on_key_event(text):
-    """ Print the current text. """
-    print('Current text:', text)
+    """Print the current text."""
+    print("Current text:", text)
 
 
 def main(test=False):
-    """ Main program.
+    """Main program.
 
     :param test: Indicate function is being tested
     :type test: bool
@@ -27,16 +28,17 @@ def main(test=False):
     screen = pygame.display.set_mode((400, 400))
 
     # Create keyboard
-    model = ['123', '456', '789', '*0#']
-    layout = vkboard.VKeyboardLayout(model,
-                                     key_size=30,
-                                     padding = 15,
-                                     height_ratio=0.8,
-                                     allow_uppercase=False,
-                                     allow_special_chars=False,
-                                     allow_space=False)
-    keyboard = vkboard.VKeyboard(screen, on_key_event, layout,
-                                 joystick_navigation=True)
+    model = ["123", "456", "789", "*0#"]
+    layout = vkboard.VKeyboardLayout(
+        model,
+        key_size=30,
+        padding=15,
+        height_ratio=0.8,
+        allow_uppercase=False,
+        allow_special_chars=False,
+        allow_space=False,
+    )
+    keyboard = vkboard.VKeyboard(screen, on_key_event, layout, joystick_navigation=True)
 
     # Main loop
     while True:
@@ -58,5 +60,5 @@ def main(test=False):
             break
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

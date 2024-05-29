@@ -143,13 +143,11 @@ class VKey(pygame.sprite.DirtySprite):
             List of events to process.
         """
         for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN\
-                    and event.button in (1, 2, 3):
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button in (1, 2, 3):
                 # Don't consider the mouse wheel (button 4 & 5):
                 if self.rect.collidepoint(event.pos):
                     self.set_pressed(1)
-            elif event.type == pygame.MOUSEBUTTONUP\
-                    and event.button in (1, 2, 3):
+            elif event.type == pygame.MOUSEBUTTONUP and event.button in (1, 2, 3):
                 # Don't consider the mouse wheel (button 4 & 5):
                 self.set_pressed(0)
             elif event.type == pygame.FINGERDOWN:
@@ -172,11 +170,15 @@ class VKey(pygame.sprite.DirtySprite):
             elif event.type == pygame.KEYUP and self.pressed_key is not None:
                 self.set_pressed(0)
                 self.pressed_key = None
-            elif event.type == pygame.JOYBUTTONDOWN and event.button == 0\
-                    and self.selected:  # Select button pressed
+            elif (
+                event.type == pygame.JOYBUTTONDOWN
+                and event.button == 0
+                and self.selected
+            ):  # Select button pressed
                 self.set_pressed(1)
-            elif event.type == pygame.JOYBUTTONUP and event.button == 0\
-                    and self.selected:  # Select button released
+            elif (
+                event.type == pygame.JOYBUTTONUP and event.button == 0 and self.selected
+            ):  # Select button released
                 self.set_pressed(0)
 
     def update_buffer(self, string):
@@ -199,7 +201,7 @@ class VKey(pygame.sprite.DirtySprite):
 
 
 class VSpaceKey(VKey):
-    """Custom key for spacebar. """
+    """Custom key for spacebar."""
 
     def __init__(self, length):
         """Default constructor.
@@ -209,7 +211,7 @@ class VSpaceKey(VKey):
         length:
             Key length.
         """
-        VKey.__init__(self, ' ', u'space')
+        VKey.__init__(self, " ", "space")
         self.length = length
 
     def set_uppercase(self, uppercase):
@@ -230,11 +232,11 @@ class VSpaceKey(VKey):
 
 
 class VBackKey(VKey):
-    """Custom key for back. """
+    """Custom key for back."""
 
     def __init__(self):
-        """Default constructor. """
-        VKey.__init__(self, u'\x7f', u'\u2190')
+        """Default constructor."""
+        VKey.__init__(self, "\x7f", "\u2190")
 
     def set_uppercase(self, uppercase):
         """Nothing to do on upper case action."""
@@ -272,7 +274,7 @@ class VActionKey(VKey):
         state_holder:
             Holder for this key state (activated or not).
         """
-        super(VActionKey, self).__init__('', symbol)
+        super(VActionKey, self).__init__("", symbol)
         self.action = action
         self.state_holder = state_holder
         self.activated_symbol = activated_symbol
@@ -313,8 +315,7 @@ class VActionKey(VKey):
         is_activated: bool
             True if activated, False otherwise.
         """
-        raise NotImplementedError(
-            "Method 'is_activated' have to be overwritten")
+        raise NotImplementedError("Method 'is_activated' have to be overwritten")
 
     def update_buffer(self, string):
         """Do not update text but trigger the delegate action.
@@ -333,13 +334,10 @@ class VActionKey(VKey):
 
 
 class VUppercaseKey(VActionKey):
-    """Action key for the uppercase switch. """
+    """Action key for the uppercase switch."""
 
     def __init__(self, action, state_holder):
-        super(VUppercaseKey, self).__init__(action,
-                                            state_holder,
-                                            u'\u21e7',
-                                            u'\u21ea')
+        super(VUppercaseKey, self).__init__(action, state_holder, "\u21e7", "\u21ea")
         self.value = pygame.K_LSHIFT
 
     def is_activated(self):
@@ -354,13 +352,10 @@ class VUppercaseKey(VActionKey):
 
 
 class VSpecialCharKey(VActionKey):
-    """Action key for the special char switch. """
+    """Action key for the special char switch."""
 
     def __init__(self, action, state_holder):
-        super(VSpecialCharKey, self).__init__(action,
-                                              state_holder,
-                                              u'#',
-                                              u'Ab')
+        super(VSpecialCharKey, self).__init__(action, state_holder, "#", "Ab")
 
     def is_activated(self):
         """Indicates if this key is activated.

@@ -6,16 +6,17 @@
 # pylint: disable=import-error
 import pygame
 import pygame_vkeyboard as vkboard
+
 # pylint: enable=import-error
 
 
 def on_key_event(text):
-    """ Print the current text. """
-    print('Current text:', text)
+    """Print the current text."""
+    print("Current text:", text)
 
 
 def main(test=False):
-    """ Main program.
+    """Main program.
 
     :param test: Indicate function is being tested
     :type test: bool
@@ -50,5 +51,5 @@ def main(test=False):
             break
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

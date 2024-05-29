@@ -77,16 +77,14 @@ def draw_round_rect(surface, color, rect, radius=0.1, width=0):
 
     circle = pygame.Surface([min(rect.size) * 3] * 2, pygame.SRCALPHA)
     if width > 0:
-        pygame.draw.arc(circle, (0, 0, 0), circle.get_rect(),
-                        1.571, 3.1415, width * 8)
+        pygame.draw.arc(circle, (0, 0, 0), circle.get_rect(), 1.571, 3.1415, width * 8)
     else:
         pygame.draw.ellipse(circle, (0, 0, 0), circle.get_rect(), 0)
-    circle = pygame.transform.smoothscale(circle,
-                                          [int(min(rect.size) * radius)] * 2)
+    circle = pygame.transform.smoothscale(circle, [int(min(rect.size) * radius)] * 2)
 
     i = 1
     shape_rect = shape.get_rect()
-    for pos in ('topleft', 'topright', 'bottomleft', 'bottomright'):
+    for pos in ("topleft", "topright", "bottomleft", "bottomright"):
         r = circle.get_rect(**{pos: getattr(shape_rect, pos)})
         shape.blit(circle, r)
         if width > 0:
@@ -128,16 +126,18 @@ class VKeyboardRenderer(object):
     DEFAULT = None
     DARK = None
 
-    def __init__(self,
-                 font_name,
-                 text_color,
-                 cursor_color,
-                 selection_color,
-                 background_color,
-                 background_key_color,
-                 background_input_color,
-                 text_special_key_color=None,
-                 background_special_key_color=None):
+    def __init__(
+        self,
+        font_name,
+        text_color,
+        cursor_color,
+        selection_color,
+        background_color,
+        background_key_color,
+        background_input_color,
+        text_special_key_color=None,
+        background_special_key_color=None,
+    ):
         """VKeyboardStyle default constructor.
 
         Some parameters take a list of color tuples, one per state.
@@ -222,7 +222,7 @@ class VKeyboardRenderer(object):
 
         while start < end:
             k = (start + end) // 2
-            new_width = self.get_text_width(text[:k+1])
+            new_width = self.get_text_width(text[: k + 1])
             if new_width > max_width:
                 end = k
             else:
@@ -230,9 +230,9 @@ class VKeyboardRenderer(object):
                 start = k + 1
 
         if nearest:
-            next_width = self.get_text_width(text[:start+1])
+            next_width = self.get_text_width(text[: start + 1])
             if abs(max_width - next_width) < abs(max_width - width):
-                return text[:start+1], next_width
+                return text[: start + 1], next_width
 
         return text[:start], width
 
@@ -285,8 +285,7 @@ class VKeyboardRenderer(object):
             self.font_input_height = surface.get_height()
 
         surface.fill(self.background_input_color)
-        surface.blit(self.font_input.render(text, 1,
-                                            self.text_color[0]), (0, 0))
+        surface.blit(self.font_input.render(text, 1, self.text_color[0]), (0, 0))
 
     def draw_key(self, surface, key):
         """Default drawing method for key.
@@ -341,7 +340,7 @@ class VKeyboardRenderer(object):
         text_color = self.text_color[key.pressed]
         if special and self.text_special_key_color and not key.pressed:
             # Key is not pressed, color according to activated state
-            state = getattr(key, 'activated', key.pressed)
+            state = getattr(key, "activated", key.pressed)
             text_color = self.text_special_key_color[state]
 
         surface.fill(self.background_color)
@@ -410,18 +409,18 @@ class VKeyboardRenderer(object):
 
 # Default keyboard renderer
 VKeyboardRenderer.DEFAULT = VKeyboardRenderer(
-    osp.join(osp.dirname(__file__), 'DejaVuSans.ttf'),
+    osp.join(osp.dirname(__file__), "DejaVuSans.ttf"),
     text_color=((0, 0, 0), (255, 255, 255)),
     cursor_color=(0, 0, 0),
     selection_color=(0, 0, 200),
     background_color=(255, 255, 255),
     background_key_color=((255, 255, 255), (0, 0, 0)),
     background_input_color=(220, 220, 220),
-    background_special_key_color=((180, 180, 180), (0, 0, 0))
+    background_special_key_color=((180, 180, 180), (0, 0, 0)),
 )
 
 VKeyboardRenderer.DARK = VKeyboardRenderer(
-    osp.join(osp.dirname(__file__), 'DejaVuSans.ttf'),
+    osp.join(osp.dirname(__file__), "DejaVuSans.ttf"),
     text_color=((182, 183, 184), (255, 255, 255)),
     cursor_color=(255, 255, 255),
     selection_color=(124, 183, 62),
@@ -429,5 +428,5 @@ VKeyboardRenderer.DARK = VKeyboardRenderer(
     background_key_color=((59, 56, 54), (47, 48, 51)),
     background_input_color=(80, 80, 80),
     text_special_key_color=((182, 183, 184), (124, 183, 62)),
-    background_special_key_color=((35, 33, 30), (47, 48, 51))
+    background_special_key_color=((35, 33, 30), (47, 48, 51)),
 )
