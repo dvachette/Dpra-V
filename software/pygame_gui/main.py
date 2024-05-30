@@ -1,4 +1,4 @@
-# Comments indications: (by using `better comments`VsCode Extension)
+# Comments indications: (by using `better comments` VsCode Extension)
 # * Important
 # TODO
 # ! alert
@@ -6,8 +6,7 @@
 # // deleted code
 
 
-# Importations
-# * You need to run pip install pygame (windows) or python3 -m pip3 install pygame (unix)
+# Imports
 import pygame_vkeyboard as vkboard
 import pygame
 import sys
@@ -49,13 +48,16 @@ class NotAllowedError(Exception):
 class Widget:
     """
     Base exception for widgets
-    All widgets needs to have a __draw__(self,surf_dest)
+    All widgets needs to have a __draw__(self,surf_dest),
+    a configure(self, *, **kwargs)
     and a __feed__(self,events) method defined
     """
-
-    def __draw__(self, surf):
-        raise NotImplementedError
-
+    def __init__(self):
+        self._position = (0,0)
+    def __repr__(self):
+        return f"{self.__class__} object at {self._position}"
+    def __str__(self) -> str:
+        return repr(self)
     def __feed__(self, events: list) -> None:
         """
         Widget.__feed__(events)

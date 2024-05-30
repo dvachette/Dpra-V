@@ -11,13 +11,6 @@ SOUNDS_FOLDER = os.path.join(os.getcwd(), "software", "sounds")
 # The folder with all the images assets
 IMAGES_FOLDER = os.path.join(os.getcwd(), "software", "images")
 
-pre = time.time()
-def move():
-    global pre
-    
-    if time.time() - pre >0.5:
-        main["stop_button"].configure(position=(random.randint(0,500),random.randint(0,500)))
-        pre = time.time()
 def second():
     main["label_hour"].configure(text_value=str(main.duration))
 
@@ -49,5 +42,4 @@ main["input"] = pgui.TextInput(
     text_size=50,
 )
 main.tick.add(second)
-main.tick.add(move)
 main.run()
