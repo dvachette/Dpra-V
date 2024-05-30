@@ -19,4 +19,5 @@ import pygame
 
 if not pygame.get_init():
     pygame.init()
+    pygame.mixer.init()
 print(f'Module {NAME} by {", ".join(AUTHORS)}.')

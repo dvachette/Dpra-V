@@ -832,7 +832,15 @@ class Window:
         self.tick = set()
         self._begin = time.time()
         self._after = list()
-
+        self._sounds = dict()
+    def after(self, function, delay):
+        last = self.duration
+        self._after.append([function,delay,last])
+    def add_sound(self, name, path):
+        self._sounds[name] = pygame.mixer.Sound(path)
+    def play_sound(self, name):
+        pygame.mixer.Sound.play(self._sounds[name])
+        
     @property
     def duration(self):
         return time.time() - self._begin
@@ -871,6 +879,14 @@ class Window:
             self.update_elements(events=events)
             for action in self.tick:
                 action.__call__()
+            now = self.duration
+            for element in self._after:
+                print(now, element[2], now - element[2])
+                if now - element[2] >= element[1]:
+                    element[2] = now
+                    element[0].__call__()
+                    
+
             for event in events:
                 if event.type == pygame.QUIT:
                     pygame.quit()

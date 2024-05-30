@@ -41,5 +41,5 @@ main["input"] = pgui.TextInput(
     fg="#000000",
     text_size=50,
 )
-main.tick.add(second)
+main.after(second, 1)
 main.run()
