@@ -5,19 +5,26 @@ import random
 import time
 import sys
 
-
-# The folder where all the sounds are located
+# Constantes des dossier de l'application
+MUSICS_FOLDER = os.path.join(os.getcwd(), "software", "musics")
 SOUNDS_FOLDER = os.path.join(os.getcwd(), "software", "sounds")
 # The folder with all the images assets
 IMAGES_FOLDER = os.path.join(os.getcwd(), "software", "images")
 
+# * code des fonctions
 def second():
     main["label_hour"].configure(text_value=str(int(main.duration)))
 def foo():
+    main.play_sound("click.tick")
     print("foo")
+    second()
+# Initialiser la fenêtre
 main = pgui.Window("#000000")
+# charger les musiques
+main.load_music_folder(MUSICS_FOLDER)
+main.load_sound_folder(SOUNDS_FOLDER)
 
-
+# * Bouton pour quitter (Ne pas enlever, ou alors mettre un autre moyen de quitter)
 main["stop_button"] = pgui.ButtonImage(
     position=(0, 0),
     text=" ",
@@ -51,7 +58,7 @@ main["button"] = pgui.Button(
     size=(200, 100),
 
 )
-main.after(second, 1)
+main.tick.add(second)
 main.run()
 pygame.quit()
 sys.exit()

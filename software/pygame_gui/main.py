@@ -845,9 +845,9 @@ class Window:
     def play_sound(self, name):
         pygame.mixer.Sound.play(self._sounds[name])
     def add_music(self, name, path):
-        self._musics[name] = pygame.mixer.music.load(path)
-    def play_music(self, name):
-        pygame.mixer.music.play(self._musics[name])
+        self._musics[name] = pygame.mixer.Sound(path)
+    def play_music(self, name, count=0):
+        pygame.mixer.Sound.play(self._musics[name], count)
     def pause_music(self, name):
         pygame.mixer.music.pause(self._musics[name])
     def unpause_music(self, name):
@@ -858,7 +858,17 @@ class Window:
         pygame.mixer.stop(self._sounds[name])
     def silence(self):
         pygame.mixer.stop()
-
+    def load_sound_folder(self, path):
+        folder = path
+        for file in os.listdir(folder):
+            if file.endswith(".mp3"):
+                self.add_sound(file.split(".mp3")[0], os.path.join(folder, file))
+    def load_music_folder(self, path):
+        folder = path
+        for file in os.listdir(folder):
+            if file.endswith(".mp3"):
+                self.add_music(file.split(".mp3")[0], os.path.join(folder, file))
+    
     @property
     def duration(self):
         return time.time() - self._begin
