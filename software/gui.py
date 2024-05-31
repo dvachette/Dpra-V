@@ -12,7 +12,7 @@ SOUNDS_FOLDER = os.path.join(os.getcwd(), "software", "sounds")
 IMAGES_FOLDER = os.path.join(os.getcwd(), "software", "images")
 
 def second():
-    main["label_hour"].configure(text_value=str(main.duration))
+    main["label_hour"].configure(text_value=str(int(main.duration)))
 def foo():
     print("foo")
 main = pgui.Window("#000000")
