@@ -833,6 +833,7 @@ class Window:
         self._begin = time.time()
         self._after = list()
         self._sounds = dict()
+        self._musics = dict()
     def after(self, function, delay):
         last = self.duration
         self._after.append([function,delay,last])
@@ -840,7 +841,21 @@ class Window:
         self._sounds[name] = pygame.mixer.Sound(path)
     def play_sound(self, name):
         pygame.mixer.Sound.play(self._sounds[name])
-        
+    def add_music(self, name, path):
+        self._musics[name] = pygame.mixer.music.load(path)
+    def play_music(self, name):
+        pygame.mixer.music.play(self._musics[name])
+    def pause_music(self, name):
+        pygame.mixer.music.pause(self._musics[name])
+    def unpause_music(self, name):
+        pygame.mixer.music.unpause(self._musics[name])
+    def stop_music(self, name):
+        pygame.mixer.music.stop(self._musics[name])
+    def stop_sound(self, name):
+        pygame.mixer.stop(self._sounds[name])
+    def silence(self):
+        pygame.mixer.stop()
+
     @property
     def duration(self):
         return time.time() - self._begin
@@ -857,10 +872,8 @@ class Window:
             self._elements[key] = value
         else:
             raise TypeError("Not a Widget")
-
     def __delitem__(self, key):
         del self._elements[key]
-
     def draw_elements(self):
         for element in self._elements.values():
             element.__draw__(self._surf)
@@ -881,7 +894,6 @@ class Window:
                 action.__call__()
             now = self.duration
             for element in self._after:
-                print(now, element[2], now - element[2])
                 if now - element[2] >= element[1]:
                     element[2] = now
                     element[0].__call__()
