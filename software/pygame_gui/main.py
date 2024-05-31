@@ -644,6 +644,8 @@ class ButtonImage(Widget):
                 pygame.mouse.set_cursor(11)
             else:
                 pygame.mouse.set_cursor(0)
+        else:
+            pygame.mouse.set_cursor(0)
         if clicked:
             self._onclick.__call__()
 
@@ -823,6 +825,7 @@ class Window:
         bg: str,
         fps: int = 60,
     ):
+        #//pygame.mouse.set_visible(False)
         self._bg = bg
         self._FPS = fps
         self._surf = SURFACE
@@ -909,8 +912,4 @@ class Window:
 
     def stop(self):
         self._runing = False
-
-
-# Fonctions d'appel de boutons
-
 

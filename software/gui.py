@@ -3,7 +3,7 @@ import os
 import pygame
 import random
 import time
-
+import sys
 
 
 # The folder where all the sounds are located
@@ -13,8 +13,8 @@ IMAGES_FOLDER = os.path.join(os.getcwd(), "software", "images")
 
 def second():
     main["label_hour"].configure(text_value=str(main.duration))
-
-
+def foo():
+    print("foo")
 main = pgui.Window("#000000")
 
 
@@ -41,5 +41,17 @@ main["input"] = pgui.TextInput(
     fg="#000000",
     text_size=50,
 )
+main["button"] = pgui.Button(
+    position=(0, 100),
+    text="foo",
+    bg="#0000FF",
+    fg="#FF0000",
+    onclick=foo,
+    text_size=50,
+    size=(200, 100),
+
+)
 main.after(second, 1)
 main.run()
+pygame.quit()
+sys.exit()
